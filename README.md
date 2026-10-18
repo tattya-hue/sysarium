@@ -10,20 +10,20 @@ sysarium
 
 Requires Linux, Rust 1.88+, and a UTF-8 terminal of at least **80 × 24**. SSH with a PTY works too. `sysarium live` opens the same monitor.
 
-**Relaxed** · CPU **8%** · wait **0.1%**
+**Relaxed** · CPU **8%** · PSI **0.1%**
 
 ![Relaxed computer — synthetic data](docs/assets/relaxed.png)
 
-| Busy · little waiting | Busy · CPU contention |
+| Busy · low contention | Busy · CPU contention |
 |---|---|
-| ![CPU 93%, wait 0.2%](docs/assets/busy-low-wait.gif) | ![CPU 92%, wait 28%](docs/assets/busy-high-wait.gif) |
-| CPU **93%** · wait **0.2%** | CPU **92%** · wait **28%** |
+| ![CPU 93%, PSI 0.2%](docs/assets/busy-low-wait.gif) | ![CPU 92%, PSI 28%](docs/assets/busy-high-wait.gif) |
+| CPU **93%** · PSI **0.2%** | CPU **92%** · PSI **28%** |
 
-**Strained** · CPU **99%** · wait **28%**
+**Strained** · CPU **99%** · PSI **28%**
 
 ![Strained computer — synthetic data](docs/assets/strained.gif)
 
-Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = strained.** Character state follows smoothed CPU usage; it does not measure latency. Papers reflect CPU wait. [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
+Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = strained.** Character state follows smoothed CPU usage; it does not measure latency. Papers reflect CPU pressure. [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
 
 | Control | Action |
 |---|---|
@@ -38,14 +38,13 @@ Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = 
 | Metric | Meaning |
 |---|---|
 | CPU usage · Working | CPU time spent doing work, across all CPUs (approx.). |
-| CPU wait · Waiting for CPU | Time with at least one task waiting for CPU, measured by Linux PSI some. |
-| Wait time | Milliseconds with a task waiting, within the latest sample. |
-| 10s trend | Recent CPU wait, smoothed over roughly 10 seconds. |
+| CPU pressure · Competition | CPU-weighted contention (PSI some, %). |
+| 10s avg | Smoothed pressure over ~10s. |
 | Runnable | Running and ready tasks; not a waiting count. |
 
-Papers show waiting time, not a task count.
+Papers show contention, not task counts.
 
-**PSI** is Linux's CPU-wait measure. Details make it concrete: **28% wait = 280 ms in a 1 s sample**. Usage is an approximation, excluding I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the formulas and counters.
+**PSI** measures CPU contention across CPUs, not per-task wait time. Higher % means more pressure. Usage excludes I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the details.
 
 Updates run at ~1 Hz, animation at up to 10 FPS. Charts keep up to 120 readings, past on the left, latest on the right, on a 0–100% scale. `N/A` and `?` mean unknown; `▁` marks zero or very low values. Charts begin with the first ~1s interval; startup uses a neutral face and `…`. Missing data never becomes zero.
 

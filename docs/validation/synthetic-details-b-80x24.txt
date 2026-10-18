@@ -2,11 +2,10 @@
 │CPU usage    92.0%                                                            │
 │  CPU time doing work (approx.).                                              │
 │                                                                              │
-│CPU wait     28.0%                                                            │
-│  Time when tasks had to wait for CPU.                                        │
-│  Wait time  280.0 ms of the last 1.000 s                                     │
-│  10s trend  28.0%  (recent CPU wait)                                         │
-│  PSI: Linux's CPU-wait measure.                                              │
+│CPU pressure 28.0%                                                            │
+│  PSI some: competition for CPU.                                              │
+│  CPU-weighted %, not per-task waits.                                         │
+│  10s avg   28.0%                                                             │
 │                                                                              │
 │Runnable     2                                                                │
 │  Running + ready to run.                                                     │
@@ -14,6 +13,7 @@
 │Updated      Every 1.000 s                                                    │
 │Sources      /proc/stat · /proc/pressure/cpu                                  │
 │Raw data     sysarium --json                                                  │
+│                                                                              │
 │                                                                              │
 │                                                                              │
 │                                                                              │

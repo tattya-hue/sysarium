@@ -10,15 +10,15 @@
 │q / Ctrl-C Quit                                                               │
 │                                                                              │
 │CPU usage  Working: CPU time doing work (approx.).                            │
-│CPU wait   Time when tasks had to wait for CPU.                               │
-│Wait time  Milliseconds with any task waiting; not per-task totals.           │
-│Usage and wait can both be high.                                              │
-│PSI        Linux measures how long tasks wait for CPU.                        │
-│10s trend  Recent CPU wait, smoothed over ~10s.                               │
+│CPU pressure  Competition for CPU (PSI some).                                 │
+│PSI %      CPU-weighted; not per-task wait time.                              │
+│10s avg    Smoothed pressure over ~10s.                                       │
 │Runnable   Running + ready to run; not a waiting count.                       │
 │                                                                              │
 │Character: green relaxed / amber busy / red strained.                         │
 │Color follows smoothed CPU usage, not measured latency.                       │
-│Papers reflect CPU wait; not a task count.                                    │
+│Papers reflect CPU pressure; not a task count.                                │
 │Starting… ~1s; N/A or ? = unavailable.                                        │
+│Charts: past → now, 0–100%, up to 120 readings.                               │
+│▁ = zero / near zero; ? = missing.                                            │
 └ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘

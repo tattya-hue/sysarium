@@ -13,7 +13,7 @@
 ## TUIの最低要件
 
 - Animation：余白を持つ1体のUnicodeのモニター・スタンドを持つPCキャラクター．CPU usageに応じて緑のRelaxed・暖色のBusy・赤のStrainedの3段階で色と表情を変える．Busy以上では頭の斜め上で丸い汗を飛ばす．処理遅延を実測する機能ではない．CPU競合で仕事の山（0〜5段階）が変化する．
-- UIは英語．詳細はCPU usage・CPU waitの値と短い定義，PSIの意味と，Wait time（直近の観測時間内にCPUを待ったms）を示す．計算式・差分カウンタはNDJSONへ集約し，通常時は1画面に収める．
+- UIは英語．CPU pressure / Competitionと表示し，詳細でCPU別に重み付けした競合の割合（PSI some）と短く示す．計算式・差分カウンタはNDJSONへ集約し，通常時は1画面に収める．
 - 通常画面は数値・履歴・キャラクターを優先し，内部ID・取得元・説明文は詳細・ヘルプへ集約する．
 - Charts：CPU活動量，CPU PSI some（1サンプル区間とavg10），参考runnable値，短い時系列を表示する．
 - Both：同じ時点に対応するAnimationとChartsを並列表示する．80列×24行未満ではキャラクターを縮小・切断せず，サイズ案内とライブの主要値に切り替える．

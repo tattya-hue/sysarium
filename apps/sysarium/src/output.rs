@@ -94,7 +94,7 @@ pub fn json(analysis: &Analysis) -> io::Result<String> {
             "sampling":"sequential proc reads, timestamps at collection start; not an atomic snapshot",
         },
         "warnings":analysis.warnings.iter().map(|w| json!({"metric":w.metric,"reason":reason(&w.reason)})).collect::<Vec<_>>(),
-        "limitations":["Visible /proc scope; containers may differ from the physical host.", "CPU usage excludes I/O wait and steal. CPU wait is PSI some time, not a task count."],
+        "limitations":["Visible /proc scope; containers may differ from the physical host.", "CPU usage excludes I/O wait and steal. CPU pressure is CPU-weighted PSI some, not per-task wait time."],
     });
     serde_json::to_string(&value).map_err(io::Error::other)
 }
@@ -117,26 +117,13 @@ pub fn details(a: &Analysis) -> String {
     }
     writeln!(
         out,
-        "\nCPU wait     {}\n  Time when tasks had to wait for CPU.",
+        "\nCPU pressure {}\n  PSI some: competition for CPU.",
         display(&a.cpu_psi_some_interval_ratio, 100.0)
     )
     .unwrap();
-    if let (Ok(_), Ok(us), Ok(window)) = (
-        &a.cpu_psi_some_interval_ratio,
-        &e.psi_total_delta_us,
-        &e.elapsed,
-    ) {
-        writeln!(
-            out,
-            "  Wait time  {:.1} ms of the last {:.3} s",
-            *us as f64 / 1000.0,
-            window.as_secs_f64()
-        )
-        .unwrap();
-    }
     writeln!(
         out,
-        "  10s trend  {}  (recent CPU wait)\n  PSI: Linux's CPU-wait measure.",
+        "  CPU-weighted %, not per-task waits.\n  10s avg   {}",
         display(&a.cpu_psi_some_avg10_pct, 1.0)
     )
     .unwrap();

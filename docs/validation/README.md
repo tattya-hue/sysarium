@@ -71,3 +71,7 @@ A/B/Dの忙しい口を下向きへ変更．汗は青い小さなしずくが左
 ## 初回待機の修正
 
 初回の差分待ちを履歴へ入れず，正常なA/B/C/Eのチャートから先頭の?を除いた．Dの実際の欠測は維持する．[起動直後の表示](synthetic-startup-80x24.svg)は灰色の中立な顔・Starting…・空のチャートを示す．初回も未知を0にはしていない．
+
+## CPU pressure表記
+
+現行画面はCPU pressure / Competitionと10s avg．詳細のWait timeを除き，PSI someはCPU別に重み付けした競合の割合と短く示す．過去のCPU waitと「どれかのタスクが待った時間」という説明を訂正した．数値は同じfixture・同じ計算のまま，READMEの4状態を更新している．

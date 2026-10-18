@@ -274,8 +274,8 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
                 assert!(out.contains("│ ──── │") || out.contains("╭──────╮"));
             }
             if mode != ViewMode::Animation {
-                assert!(out.contains("CPU wait"));
-                assert!(out.contains("10s trend"));
+                assert!(out.contains("CPU pressure"));
+                assert!(out.contains("10s avg"));
                 assert!(!out.lines().skip(3).take(19).any(|line| line.contains('?')));
             }
         }
@@ -511,9 +511,9 @@ fn overlay_scroll_resize_help_and_quit_remain_accessible() {
     press(&mut app, KeyCode::Char('?'));
     for term in [
         "CPU usage",
-        "CPU wait",
+        "CPU pressure",
         "not a task count",
-        "Linux measures how long tasks wait",
+        "CPU-weighted; not per-task wait time",
         "Runnable",
         "~1/s",
         "0–100%",
@@ -753,7 +753,7 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
     app.resize(40, 24);
     app.observe(p3_observation("d", 3));
     assert_eq!(app.analysis.source_sample_id, 3);
-    assert!(render(&app, 40, 24).contains("CPU wait N/A"));
+    assert!(render(&app, 40, 24).contains("CPU pressure N/A"));
     assert!(press(&mut app, KeyCode::Char('q')));
 }
 

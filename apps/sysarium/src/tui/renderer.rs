@@ -47,12 +47,12 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             .map(|text| {
                 let color = if text.starts_with("CPU usage ") {
                     MINT
-                } else if text.starts_with("CPU wait ") {
+                } else if text.starts_with("CPU pressure ") {
                     AMBER
                 } else {
                     INK
                 };
-                let heading = text.starts_with("CPU usage ") || text.starts_with("CPU wait ");
+                let heading = text.starts_with("CPU usage ") || text.starts_with("CPU pressure ");
                 Line::styled(
                     text,
                     Style::default().fg(color).add_modifier(if heading {
@@ -124,7 +124,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
                 Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
             let badges = format!(
-                "CPU usage {}     CPU wait {}",
+                "CPU usage {}     CPU pressure {}",
                 value(&app.analysis.cpu_active_ratio, 100.0),
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             );
@@ -327,14 +327,14 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
     card(
         frame,
         cards[1],
-        "CPU wait",
+        "CPU pressure",
         &app.analysis.cpu_psi_some_interval_ratio,
         app.history.iter().map(|p| p.pressure).collect(),
         AMBER,
         &[
-            "Waiting for CPU".into(),
+            "Competition".into(),
             format!(
-                "10s trend {}",
+                "10s avg {}",
                 value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
             ),
         ],
@@ -461,7 +461,7 @@ fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {
                 value(&app.analysis.cpu_active_ratio, 100.0)
             )),
             Line::raw(format!(
-                "CPU wait {}",
+                "CPU pressure {}",
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             )),
         ]);

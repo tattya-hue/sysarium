@@ -2,10 +2,10 @@
 │CPU usage    85.0%                    │
 │  CPU time doing work (approx.).      │
 │                                      │
-│CPU wait     N/A                      │
-│  Time when tasks had to wait for CPU.│
-│  10s trend  N/A  (recent CPU wait)   │
-│  PSI: Linux's CPU-wait measure.      │
+│CPU pressure N/A                      │
+│  PSI some: competition for CPU.      │
+│  CPU-weighted %, not per-task waits. │
+│  10s avg   N/A                       │
 │  Sample #2: Source missing; this metr│
 │ic may be unsupported.                │
 │                                      │

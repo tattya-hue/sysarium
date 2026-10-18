@@ -12,6 +12,6 @@
             Current: 40 x 24
 
              CPU usage 99.0%
-             CPU wait 28.0%
+           CPU pressure 28.0%
 
              q quit · ? help
