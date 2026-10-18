@@ -20,5 +20,5 @@
 │Character: green relaxed / amber busy / red strained.                         │
 │Color follows smoothed CPU usage, not measured latency.                       │
 │Papers reflect CPU wait; not a task count.                                    │
-│N/A or ? = unknown. First reading needs ~1s.                                  │
+│Starting… ~1s; N/A or ? = unavailable.                                        │
 └ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘

@@ -47,7 +47,7 @@ Papers show waiting time, not a task count.
 
 **PSI** is Linux's CPU-wait measure. Details make it concrete: **28% wait = 280 ms in a 1 s sample**. Usage is an approximation, excluding I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the formulas and counters.
 
-Updates run at ~1 Hz, animation at up to 10 FPS. Charts keep up to 120 readings, past on the left, latest on the right, on a 0–100% scale. `N/A` and `?` mean unknown; `▁` marks zero or very low values. The first reading needs about one second for a difference. Missing data never becomes zero.
+Updates run at ~1 Hz, animation at up to 10 FPS. Charts keep up to 120 readings, past on the left, latest on the right, on a 0–100% scale. `N/A` and `?` mean unknown; `▁` marks zero or very low values. Charts begin with the first ~1s interval; startup uses a neutral face and `…`. Missing data never becomes zero.
 
 ```sh
 sysarium --json > observations.ndjson

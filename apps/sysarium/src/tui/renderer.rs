@@ -192,11 +192,13 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     let level = app.scene.character.activity_level();
     let busy = matches!(level, Ok(ActivityLevel::Busy | ActivityLevel::Strained));
     let mouth = match level {
+        Err(Reason::FirstSample) => "──",
         Ok(ActivityLevel::Relaxed) | Err(_) => "╰╯",
         Ok(ActivityLevel::Busy) => "╭╮",
         Ok(ActivityLevel::Strained) => "~~",
     };
     let eyes = match level {
+        Err(Reason::FirstSample) => "·    ·",
         Err(_) => "?    ?",
         Ok(ActivityLevel::Strained) => ">    <",
         _ => "●    ●",
@@ -270,13 +272,16 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         "───────────────────────────────────────",
         LINE,
     );
-    if level.is_err() {
-        put(frame, area, 0, 0, "CPU usage N/A", AMBER);
+    match level {
+        Err(Reason::FirstSample) => put(frame, area, 0, 0, "Starting…", MUTED),
+        Err(_) => put(frame, area, 0, 0, "CPU usage N/A", AMBER),
+        Ok(_) => {}
     }
 }
 
 fn papers(frame: &mut Frame, area: Rect, x: u16, bottom: u16, level: &Result<u8, Reason>) {
     match level {
+        Err(Reason::FirstSample) => put(frame, area, x, bottom.saturating_sub(1), "  …", MUTED),
         Err(_) => put(frame, area, x, bottom.saturating_sub(1), "  ?", AMBER),
         Ok(0) => {}
         Ok(level) => {
@@ -427,9 +432,11 @@ fn chart(frame: &mut Frame, area: Rect, history: &[Option<f64>], color: Color) {
 }
 
 fn value(value: &Result<f64, Reason>, multiplier: f64) -> String {
-    value
-        .as_ref()
-        .map_or("N/A".into(), |value| format!("{:.1}%", value * multiplier))
+    match value {
+        Err(Reason::FirstSample) => "…".into(),
+        Err(_) => "N/A".into(),
+        Ok(value) => format!("{:.1}%", value * multiplier),
+    }
 }
 
 fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {

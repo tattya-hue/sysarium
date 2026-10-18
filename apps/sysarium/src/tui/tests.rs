@@ -97,6 +97,13 @@ fn p3_export_review_snapshots() {
             .unwrap();
         }
     }
+    export_svg(
+        &App::new(p3_observation("before", 1)),
+        80,
+        24,
+        Duration::ZERO,
+        &root.join("synthetic-startup-80x24.svg"),
+    );
     if let Some(frames_root) = std::env::var_os("SYSARIUM_PREVIEW_FRAMES") {
         for case in ["a", "b", "c", "e"] {
             let app = p3_app(case);
@@ -269,7 +276,7 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
             if mode != ViewMode::Animation {
                 assert!(out.contains("CPU wait"));
                 assert!(out.contains("10s trend"));
-                assert!(out.contains("?")); // first observation remains a history gap
+                assert!(!out.lines().skip(3).take(19).any(|line| line.contains('?')));
             }
         }
     }
@@ -279,8 +286,9 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
 fn unavailable_has_readable_live_details_and_lossless_json() {
     let mut app = App::new(fixture(1));
     let out = render(&app, 80, 24);
-    assert!(out.contains("N/A"));
-    assert!(out.contains('?'));
+    assert!(out.contains("Starting…"));
+    assert!(out.contains("·    ·"));
+    assert!(!out.contains("?    ?"));
     assert!(!out.contains("0.0%"));
     assert!(!out.contains("│ ──── │"));
     let mut next = fixture(2);
@@ -322,9 +330,85 @@ fn unavailable_has_readable_live_details_and_lossless_json() {
 }
 
 #[test]
+fn startup_has_no_chart_point_and_healthy_history_never_keeps_a_startup_gap() {
+    let mut app = App::new(fixture(1));
+    assert!(app.history.is_empty());
+    assert_eq!(app.analysis.cpu_active_ratio, Err(Reason::FirstSample));
+    assert_eq!(
+        app.analysis.cpu_psi_some_interval_ratio,
+        Err(Reason::FirstSample)
+    );
+    for mode in [ViewMode::Animation, ViewMode::Charts, ViewMode::Both] {
+        app.mode = mode;
+        let out = render(&app, 80, 24);
+        let content = out.lines().skip(3).take(19).collect::<String>();
+        assert!(!content.contains('?') && !content.contains('▁'));
+        assert!(!content.contains("0.0%"));
+    }
+    for id in 2..=5 {
+        let mut next = fixture(id);
+        next.readings.cpu_times.value.as_mut().unwrap().user += (id - 2) * 100;
+        next.readings.cpu_psi_some.value.as_mut().unwrap().total_us += (id - 2) * 1000;
+        app.observe(next);
+        assert_eq!(app.history.front().unwrap().sample_id, 2);
+        assert_eq!(app.history.len(), (id - 1) as usize);
+        assert!(
+            app.history
+                .iter()
+                .all(|p| p.activity.is_some() && p.pressure.is_some())
+        );
+        let out = render(&app, 80, 24);
+        assert!(!out.lines().skip(3).take(19).any(|line| line.contains('?')));
+        assert!(!out.contains("Starting…"));
+    }
+}
+
+#[test]
+fn actual_read_errors_at_startup_and_later_remain_unknown() {
+    let mut bad = fixture(1);
+    bad.readings.cpu_times.value = Err(Reason::PermissionDenied);
+    bad.readings.cpu_psi_some.value = Err(Reason::NotFound);
+    let mut app = App::new(bad);
+    let out = render(&app, 80, 24);
+    assert!(out.contains("?    ?") && out.contains("N/A"));
+    assert!(!out.contains("Starting…") && !out.contains("0.0%"));
+    app.observe(fixture(2)); // The preceding read failed; there is still no valid interval.
+    assert_eq!(app.history.len(), 1);
+    assert_eq!(app.history[0].activity, None);
+    assert_eq!(app.history[0].pressure, None);
+    app.mode = ViewMode::Charts;
+    assert!(
+        render(&app, 80, 24)
+            .lines()
+            .skip(3)
+            .take(19)
+            .any(|line| line.contains('?'))
+    );
+    let mut recovered = fixture(3);
+    recovered.readings.cpu_times.value.as_mut().unwrap().user += 100;
+    recovered
+        .readings
+        .cpu_psi_some
+        .value
+        .as_mut()
+        .unwrap()
+        .total_us += 1000;
+    app.observe(recovered);
+    assert!(app.history[1].activity.is_some() && app.history[1].pressure.is_some());
+    assert!(
+        render(&app, 80, 24)
+            .lines()
+            .skip(3)
+            .take(19)
+            .any(|line| line.contains('?'))
+    );
+}
+
+#[test]
 fn history_is_bounded_and_keeps_zero_distinct_from_missing() {
     let mut app = app();
-    assert_eq!(app.history.front().unwrap().activity, None);
+    assert_eq!(app.history.front().unwrap().sample_id, 2);
+    assert_eq!(app.history.front().unwrap().activity, Some(0.8));
     assert_eq!(app.history.back().unwrap().activity, Some(0.8));
     for id in 3..=140 {
         app.observe(fixture(id));
