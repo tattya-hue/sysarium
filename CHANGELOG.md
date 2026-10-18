@@ -1,44 +1,31 @@
 # Changelog
 
-## 0.1.0（リリース候補・未公開）
+## 0.1.0 — 2026-10-18
 
-公開日と正式タグは，`docs/RELEASE.md`の手動確認を終えてから確定する．
+Sysariumの最初のMVP．LinuxのCPU使用率とCPU実行待ちの競合をライブで表示する．
 
-### 追加
+### 機能
 
-- Rust 2024 editionの3 crate Workspace：OS非依存Core，Linux Collector，CLI/TUI．
-- `/proc/stat`のaggregate CPU時間・runnable参考値，CPU PSI `some`のパースと利用可能性の判定．
-- 単調時計による2観測の差分解析．CPU活動量と競合を独立した2軸として扱い，単位・観測元・根拠を保持．
-- `sysarium`／`sysarium live`のライブ監視と`sysarium --json`のNDJSONストリーム．単発status／inspectは廃止．
-- 余白・色・UnicodeのPCキャラクター（左右対称の顔・スタンド・キーボード），書類による競合表示と複数行の時系列グラフ．通常画面の説明文を絞り，初期表示をBothへ変更．
-- Computer／Charts／Both，意味的Scene，最大120観測の履歴．欠測・初回・不正値・逆行は理由付き不明として表示．
-- 最新の同じsample_idへ追随する，指標ごとに整理したライブ詳細，指標・操作のヘルプ，スクロール，リサイズ対応．
-- 通常終了・エラー・panic unwind，UnixのSIGTERM／SIGHUP／SIGINTでの端末復旧．
-- 合成fixture・CLIプロセス・実PTYのテストと，stable／Rust 1.88のCI定義．
+- `sysarium`／`sysarium live`によるライブTUI．Animation／Charts／Bothを切り替えられる．
+- CPU usageとCPU competition（PSI some）の現在値，10s avg，最大120区間の履歴，runnable参考値．
+- CPU使用率を緑・暖色・赤のPCキャラクターと表情・丸い汗で表現．書類はCPU競合の比喩であり，タスク数ではない．
+- 起動直後は中立な待機表情と`…`を表示し，履歴は最初の差分区間から開始．取得失敗・欠測・不正値は理由付き不明として区別する．
+- `i`のライブ詳細，`?`のヘルプ，スクロール，端末リサイズ．通常表示は80×24以上を必要とし，小さい端末では案内と主要値を表示する．
+- `sysarium --json`／`sysarium live --json`による約1HzのNDJSON．単位・取得元・差分・計算式・欠測理由を保持する．
+- 終了・エラー・panic unwind・SIGTERM／SIGHUP／SIGINT時の端末復旧．
+- Rust 2024の3 crate Workspace．CoreはOS・描画技術非依存とし，Linux固有I/OはCollectorへ分離する．
 
-### 変更
+### 配布・対応範囲
 
-- キーボードを外し，PC本体の画面色・表情・汗でCPU usageを表現．
-- READMEに落ち着いた状態の画像を追加し，高使用率・低競合／高競合の比較も維持．
+- 正式タグ`v0.1.0`に対応するソース配布．Linux，Rust 1.88以上，UTF-8端末が必要．ライセンスはApache-2.0．
+- crates.io公開・ビルド済みバイナリ配布は含まない．GUI・Agent・Simulation・長期保存・プロセス別の原因特定は対象外．
 
-- スタンドを1行短縮し，CPU usageに応じたキー点灯を明確化．
-- 詳細にWait timeをmsで追加し，PSI・更新間隔・10s trendの説明を簡略化．
-- READMEに低競合／高競合時の合成GIFと静止画を追加．
+### 既知の制約
 
-- UIとCLIヘルプを英語へ統一．View: Computer / Charts / Bothへ変更．
-- CPU usage（Working）とCPU wait（Waiting for CPU）を対にし，PSI・Windowの定義を短く表示．差分カウンタと式はJSONへ集約．
+- CPU usageは本プロジェクトの定義による近似値．I/O waitとstealは活動に含めない．
+- CPU competitionはCPU別に重み付けされたPSI someの割合であり，タスク別待ち時間の合計・平均ではない．
+- `/proc`の可視範囲・PSIの利用可否はカーネル，コンテナ，権限に依存する．
+- キャラクターと書類の境界値は暫定．平滑化には表示上の遅れがあり，赤い状態は処理遅延・温度・障害の実測判定ではない．
+- 合成fixtureと実PTYで検証している．制限VMでの手動負荷比較・境界値の実機校正，端末やフォント全般の互換性評価は未実施．README画像は合成表示例．
 
-- 製品とコマンドをSysarium／sysariumへ統一．旧insideからの置換となり，アプリはapps/sysariumへ移動．
-- 通常画面の最小サイズを80×24へ変更し，縮小でキャラクターが切れる表示を廃止．
-- avg10をpressureへまとめ，詳細の内部型・生JSONを除去．欠測理由を人向けに説明する．
-
-### 対応範囲・既知の制約
-
-- Linuxのsystem-viewのみ．初回提供はソースからのビルド・インストール．crates.io公開やOS別バイナリ配布は行わない．
-- CPU活動量は本プロジェクトの定義による近似値．PSIの山は競合の比喩であり，待機タスク数ではない．
-- PSI未対応・アクセス制限時は理由付きN/A．`/proc`の可視範囲はコンテナやVMに依存する．
-- 山のしきい値は暫定値．境界付近では段階が往復する．活動強度の平滑化には表示上の遅れがある．
-- 80×24未満の端末はサイズ案内とライブ主要値を表示．端末を広げると通常画面へ戻る．
-- 制限環境での手動負荷比較と利用者評価は，現時点では未実施．合成画面は実機測定結果ではない．
-
-詳細は`README.md`と`docs/P3-VALIDATION.md`を参照．
+操作方法は`README.md`，検証の詳細は`docs/P3-VALIDATION.md`を参照．
