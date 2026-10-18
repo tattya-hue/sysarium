@@ -106,8 +106,14 @@ cargo build --release --locked -p inside
 cargo install --path apps/inside --locked
 ```
 
-Cargo manifestにも最小Rustバージョン1.88を指定している．今回の実行環境はRust 1.95.0であり，1.88そのものの動作試験は未実施．
+Cargo manifestにも最小Rustバージョン1.88を指定している．Rust 1.88.0と1.95.0で，クリーンなcloneから55件の通常テストが成功した．1.88.0ではreleaseビルドと`cargo install --path apps/inside --locked`も検証済み．インストール先の実行ファイルでバージョン・JSON・liveを確認した．
 
 CLIは実行ファイルを起動して，ヘルプ・バージョン，JSONのみのstdout，不正UTF-8引数・未知オプションの診断，非TTYのlive拒否を検証する．このプロセステストは通常の/proc読込だけを行い，ファイルがない環境では理由付きUnavailableを検証する．
 
 PTY検証は詳細・ヘルプ・スクロール・リサイズ・q終了に加え，SIGTERM／SIGHUP／SIGINTの個別送信でも端末復旧を確認する．
+
+## v0.1.0の出荷準備
+
+[変更履歴](CHANGELOG.md)と[出荷確認表](docs/RELEASE.md)に，ソース配布の範囲・技術検証・残る手動確認をまとめている．正式タグと公開日は手動確認を反映してから確定する．
+
+`.github/workflows/ci.yml`はLinux上でstableとRust 1.88.0のテスト，releaseビルド・ソースインストール・PTY検証を行う．fmtとClippyはstableで検証する．CIは高負荷ワークロードを起動しない．
