@@ -111,3 +111,5 @@ git status --porcelain
 ## 現行UI（英語化）
 
 通常のPC表示とView: Computer / Charts / Bothへ変更した．CPU usage / WorkingとCPU wait / Waiting for CPUを対にし，詳細は短い定義とPSI・Windowの意味だけを残す．計算式と完全な根拠はNDJSONへ集約する．現行の通常テストは51件．旧ロボットやSplitの記録は以前の改訂を指す．
+
+スタンド短縮とWait time追加後の通常テストは52件．READMEの高負荷表示例は実際のRendererから生成した合成GIF・PNGであり，手動の実機負荷比較を完了扱いにはしない．

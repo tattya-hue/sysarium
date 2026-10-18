@@ -115,7 +115,31 @@ pub fn details(a: &Analysis) -> String {
     if let Err(reason) = &a.cpu_active_ratio {
         writeln!(out, "  {}", explain(reason)).unwrap();
     }
-    writeln!(out,"\nCPU wait     {}\n  Time with any task waiting for CPU.\n  PSI = Pressure Stall Information.\n  Usage and wait can both be high.\n  10s trend  {}  (smoothed wait)",display(&a.cpu_psi_some_interval_ratio,100.0),display(&a.cpu_psi_some_avg10_pct,1.0)).unwrap();
+    writeln!(
+        out,
+        "\nCPU wait     {}\n  Time when tasks had to wait for CPU.",
+        display(&a.cpu_psi_some_interval_ratio, 100.0)
+    )
+    .unwrap();
+    if let (Ok(_), Ok(us), Ok(window)) = (
+        &a.cpu_psi_some_interval_ratio,
+        &e.psi_total_delta_us,
+        &e.elapsed,
+    ) {
+        writeln!(
+            out,
+            "  Wait time  {:.1} ms of the last {:.3} s",
+            *us as f64 / 1000.0,
+            window.as_secs_f64()
+        )
+        .unwrap();
+    }
+    writeln!(
+        out,
+        "  10s trend  {}  (recent CPU wait)\n  PSI: Linux's CPU-wait measure.",
+        display(&a.cpu_psi_some_avg10_pct, 1.0)
+    )
+    .unwrap();
     if let Err(reason) = &a.cpu_psi_some_interval_ratio {
         writeln!(out, "  {}", explain(reason)).unwrap();
     }
@@ -125,17 +149,12 @@ pub fn details(a: &Analysis) -> String {
         writeln!(out, "  Trend: {}", explain(reason)).unwrap();
     }
     match &e.current.readings.procs_running.value {
-        Ok(v) => writeln!(out, "\nRunnable     {v}\n  Running + ready tasks.").unwrap(),
+        Ok(v) => writeln!(out, "\nRunnable     {v}\n  Running + ready to run.").unwrap(),
         Err(reason) => writeln!(out, "\nRunnable     N/A\n  {}", explain(reason)).unwrap(),
     }
     match &e.elapsed {
-        Ok(d) => writeln!(
-            out,
-            "\nWindow       {:.3} s · Time between the last two readings.",
-            d.as_secs_f64()
-        )
-        .unwrap(),
-        Err(reason) => writeln!(out, "\nWindow       N/A · {}", explain(reason)).unwrap(),
+        Ok(d) => writeln!(out, "\nUpdated      Every {:.3} s", d.as_secs_f64()).unwrap(),
+        Err(reason) => writeln!(out, "\nUpdated      N/A · {}", explain(reason)).unwrap(),
     }
     writeln!(
         out,

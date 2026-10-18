@@ -18,6 +18,10 @@
 
 ### 変更
 
+- スタンドを1行短縮し，CPU usageに応じたキー点灯を明確化．
+- 詳細にWait timeをmsで追加し，PSI・更新間隔・10s trendの説明を簡略化．
+- READMEに低競合／高競合時の合成GIFと静止画を追加．
+
 - UIとCLIヘルプを英語へ統一．View: Computer / Charts / Bothへ変更．
 - CPU usage（Working）とCPU wait（Waiting for CPU）を対にし，PSI・Windowの定義を短く表示．差分カウンタと式はJSONへ集約．
 

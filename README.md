@@ -10,9 +10,12 @@ sysarium
 
 Requires Linux, Rust 1.88+, and a UTF-8 terminal of at least **80 × 24**. SSH with a PTY works too. `sysarium live` opens the same monitor.
 
-![Both view — synthetic data, 80 × 24](docs/validation/synthetic-b-80x24.svg)
+| Busy · little waiting | Busy · CPU contention |
+|---|---|
+| ![CPU 93%, wait 0.2%](docs/assets/busy-low-wait.gif) | ![CPU 92%, wait 28%](docs/assets/busy-high-wait.gif) |
+| CPU **93%** · wait **0.2%** | CPU **92%** · wait **28%** |
 
-This preview uses synthetic fixtures, not a real load experiment.
+Synthetic fixtures, not a load test. **Keys pulse with CPU usage; papers reflect CPU wait.** [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
 
 | Control | Action |
 |---|---|
@@ -28,12 +31,13 @@ This preview uses synthetic fixtures, not a real load experiment.
 |---|---|
 | CPU usage · Working | CPU time spent doing work, across all CPUs (approx.). |
 | CPU wait · Waiting for CPU | Time with at least one task waiting for CPU, measured by Linux PSI some. |
-| 10s trend | Smoothed CPU wait over roughly 10 seconds. |
+| Wait time | Milliseconds with a task waiting, within the latest sample. |
+| 10s trend | Recent CPU wait, smoothed over roughly 10 seconds. |
 | Runnable | Running and ready tasks; not a waiting count. |
 
-High usage can come with little waiting or with heavy contention. The keyboard follows usage; stacked papers reflect waiting, not a task count.
+Papers show waiting time, not a task count.
 
-Details define **PSI** (Pressure Stall Information) and the **window** (time between the last two readings). Formulas and counters stay in JSON. Usage keeps the existing definition: user + nice + system + irq + softirq, divided by the first eight CPU time counters; I/O wait and steal are excluded from work. It may differ from other monitors. See [architecture](docs/ARCHITECTURE.md).
+**PSI** is Linux's CPU-wait measure. Details make it concrete: **28% wait = 280 ms in a 1 s sample**. Usage is an approximation, excluding I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the formulas and counters.
 
 Updates run at ~1 Hz, animation at up to 10 FPS. Charts keep up to 120 readings, past on the left, latest on the right, on a 0–100% scale. `N/A` and `?` mean unknown; `▁` marks zero or very low values. The first reading needs about one second for a difference. Missing data never becomes zero.
 

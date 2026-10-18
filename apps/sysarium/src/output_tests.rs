@@ -142,14 +142,14 @@ fn live_details_explain_values_units_and_inputs() {
     assert!(inspect.contains("80.0%"));
     assert!(inspect.contains("25.0%"));
     assert!(inspect.contains("2.5%"));
-    assert!(inspect.contains("Running + ready tasks"));
+    assert!(inspect.contains("Running + ready to run"));
     for detail in [
         "CPU usage",
         "CPU wait",
-        "PSI = Pressure Stall Information",
-        "Time with any task waiting for CPU",
-        "Window",
-        "Time between the last two readings",
+        "PSI: Linux's CPU-wait measure",
+        "Time when tasks had to wait for CPU",
+        "250.0 ms of the last 1.000 s",
+        "Updated      Every 1.000 s",
         "/proc/pressure/cpu",
     ] {
         assert!(inspect.contains(detail), "missing {detail}");
@@ -210,4 +210,38 @@ fn stream_emits_flushed_sequential_documents_and_propagates_writer_errors() {
     )
     .unwrap_err();
     assert_eq!(error.kind(), io::ErrorKind::WriteZero);
+}
+
+#[test]
+fn wait_duration_uses_the_observed_window_and_never_fills_missing_with_zero() {
+    let text = render(true, |o| {
+        if o.sample_id == 2 {
+            o.elapsed_since_previous = Some(Duration::from_millis(500));
+        }
+    });
+    assert!(text.contains("CPU wait     50.0%"));
+    assert!(text.contains("250.0 ms of the last 0.500 s"));
+    let baseline = fixture(1).readings.cpu_psi_some.value.unwrap().total_us;
+    let zero = render(true, |o| {
+        o.readings.cpu_psi_some.value.as_mut().unwrap().total_us = baseline
+    });
+    assert!(zero.contains("Wait time  0.0 ms"));
+    let first = output::details(&analyze(None, &fixture(1)));
+    assert!(!first.contains("Wait time"));
+    for cause in [Reason::NotFound, Reason::PermissionDenied] {
+        let missing = render(true, |o| {
+            if o.sample_id == 2 {
+                o.readings.cpu_psi_some.value = Err(cause.clone());
+            }
+        });
+        assert!(missing.contains("CPU wait     N/A"));
+        assert!(!missing.contains("Wait time"));
+    }
+    let invalid = render(true, |o| {
+        if o.sample_id == 2 {
+            o.readings.cpu_psi_some.value.as_mut().unwrap().total_us = baseline + 2_000_000;
+        }
+    });
+    assert!(invalid.contains("CPU wait     N/A"));
+    assert!(!invalid.contains("Wait time"));
 }

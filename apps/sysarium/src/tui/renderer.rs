@@ -226,22 +226,25 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     put(frame, stage, 8, 4, "·", CHEEK);
     put(frame, stage, 15, 4, "·", CHEEK);
     put(frame, stage, 10, 8, "│  │", MINT);
-    put(frame, stage, 10, 9, "│  │", MINT);
-    put(frame, stage, 7, 10, "╭──┴──┴──╮", MINT);
-    put(frame, stage, 7, 11, "╰────────╯", MINT);
+    put(frame, stage, 7, 9, "╭──┴──┴──╮", MINT);
+    put(frame, stage, 7, 10, "╰────────╯", MINT);
     put(frame, stage, 2, 13, "╭──────────────────╮", MINT);
-    put(
-        frame,
-        stage,
-        2,
-        14,
-        if phase {
-            "│ ▪ ▫ ▪ ▫  ▫ ▪ ▫ ▪ │"
+    put(frame, stage, 2, 14, "│                  │", MINT);
+    let keys = if intensity.is_err() {
+        "? ? ? ?  ? ? ? ?"
+    } else if phase {
+        "▪ ▫ ▪ ▫  ▫ ▪ ▫ ▪"
+    } else {
+        "▫ ▪ ▫ ▪  ▪ ▫ ▪ ▫"
+    };
+    for (i, key) in keys.chars().enumerate() {
+        let color = if key == '▪' && intensity.as_ref().is_ok_and(|v| *v > 0.0) {
+            FACE
         } else {
-            "│ ▫ ▪ ▫ ▪  ▪ ▫ ▪ ▫ │"
-        },
-        MINT,
-    );
+            MUTED
+        };
+        put(frame, stage, 4 + i as u16, 14, &key.to_string(), color);
+    }
     put(frame, stage, 2, 15, "│    ──────────    │", MINT);
     put(frame, stage, 2, 16, "╰──────────────────╯", MINT);
     papers(frame, stage, 30, 16, &app.scene.task_stack.pressure_level);

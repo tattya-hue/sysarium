@@ -78,6 +78,7 @@ fn p3_export_review_snapshots() {
                     &app,
                     width,
                     height,
+                    Duration::ZERO,
                     &root.join(format!("synthetic-{case}-{width}x{height}.svg")),
                 );
             }
@@ -94,6 +95,22 @@ fn p3_export_review_snapshots() {
                 snapshot,
             )
             .unwrap();
+        }
+    }
+    if let Some(frames_root) = std::env::var_os("SYSARIUM_PREVIEW_FRAMES") {
+        for case in ["a", "b"] {
+            let app = p3_app(case);
+            let frames = std::path::PathBuf::from(&frames_root).join(case);
+            std::fs::create_dir_all(&frames).unwrap();
+            for step in 0..24 {
+                export_svg(
+                    &app,
+                    80,
+                    24,
+                    Duration::from_millis(step * 100),
+                    &frames.join(format!("{step:02}.svg")),
+                );
+            }
         }
     }
     for (name, key, width, height) in [
@@ -401,7 +418,7 @@ fn overlay_scroll_resize_help_and_quit_remain_accessible() {
         "CPU usage",
         "CPU wait",
         "not a task count",
-        "Pressure Stall Information",
+        "Linux measures how long tasks wait",
         "Runnable",
         "~1/s",
         "0–100%",
@@ -411,11 +428,11 @@ fn overlay_scroll_resize_help_and_quit_remain_accessible() {
 }
 
 // レビュー用の静的成果物．本体の描画バッファを色も含めてそのまま保存する．
-fn export_svg(app: &App, width: u16, height: u16, path: &std::path::Path) {
+fn export_svg(app: &App, width: u16, height: u16, elapsed: Duration, path: &std::path::Path) {
     use ratatui::style::Color;
     let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
     terminal
-        .draw(|frame| renderer::draw(frame, app, Duration::ZERO))
+        .draw(|frame| renderer::draw(frame, app, elapsed))
         .unwrap();
     let color = |c: Color| match c {
         Color::Rgb(r, g, b) => format!("#{r:02x}{g:02x}{b:02x}"),

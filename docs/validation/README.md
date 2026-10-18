@@ -34,3 +34,16 @@ SVGの見え方は閲覧側のフォントにも依存する．
 ## 英語UIと通常PCへの改訂
 
 画面記録はView: Computer / Charts / Both，CPU usage / CPU waitへ更新した．キャラクターは通常のモニター・スタンド・キーボード．顔も含め左右対称とし，詳細は短い英語の値・定義へ整理している．過去のロボット・Splitという名称は旧表示の記録となる．
+
+## README用の合成動画
+
+[低競合](../assets/busy-low-wait.gif)／[高競合](../assets/busy-high-wait.gif)．A/Bの同じ観測（sample_id=2）を使い，実際のRendererの時刻だけを100msずつ24フレーム進める．観測値・書類は固定し，CPU usageに応じてキーだけが点滅する．実機負荷や記録・再生機能を追加しない．
+
+再生成（任意の開発作業．PythonのPillowとDejaVu Sans Monoが必要．アプリ・通常テスト・CIには不要）：
+
+```sh
+INSIDE_REVIEW_SNAPSHOTS="$PWD/docs/validation" SYSARIUM_PREVIEW_FRAMES="$PWD/target/readme-previews" cargo test -p sysarium tui::tests::p3_export_review_snapshots -- --ignored --exact
+python3 scripts/render_previews.py target/readme-previews docs/assets
+```
+
+`--font`でフォントパスを指定できる．中間SVGはGit対象外のtargetへ置き，GIFとPNGだけをREADMEで使う．合成画像は実測の負荷実験結果として扱わない．

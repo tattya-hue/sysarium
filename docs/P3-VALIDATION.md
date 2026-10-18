@@ -94,9 +94,9 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 | 検証 | 結果 |
 |---|---|
 | `cargo fmt --all -- --check` | 成功 |
-| `cargo test --workspace` | 51件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
+| `cargo test --workspace` | 52件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
 | `cargo clippy --workspace --all-targets -- -D warnings` | 成功 |
-| `cargo +1.88.0 test --workspace --locked` | 51件成功（MSRV） |
+| `cargo +1.88.0 test --workspace --locked` | 52件成功（MSRV） |
 | `cargo build --release --locked -p sysarium` | 成功．release版のversion・継続NDJSON・初回欠測・SIGTERM終了も確認 |
 | 明示的な画面書出しテスト | 成功．A〜D×4サイズの16画面と詳細・ヘルプの3画面を保存 |
 | 実PTYのlive | Tab，詳細・ヘルプ・スクロール，140×34→40×24→80×24，q終了，端末属性・画面・カーソル復旧を確認 |
@@ -137,3 +137,12 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 UI・ヘルプ・理由を英語に統一し，全表示・欠測・初回・小画面・オーバーレイで日本語の表示文言が残らないことを検証する．通常の詳細は20行以内で，数値・定義・PSI・Window・取得元を示し，guest等の計算注記や差分カウンタを出さない．根拠と原因の全文はNDJSONに保持する．
 
 画面の名称はView: Computer / Charts / Both．CPU usage / WorkingとCPU wait / Waiting for CPUの2軸を対応させる．計算式・暫定しきい値・観測スコープは変更しない．以下の過去の表示・名称に関する記録より，この改訂と再生成した合成画面を優先する．実端末フォント差と利用者の理解度評価は引き続き確認が必要．
+
+## スタンド・Wait time・README動画の改訂
+
+- スタンドの首を1行短縮．キーの点灯はCPU usageに応じた点滅速度を表し，点灯と消灯の色を分ける．左右対称・0と欠測時の停止は既存の描画テストで確認する．
+- Wait timeを既存のPSI some差分からms換算して表示．500msの観測区間で250ms待ち→50%，計測できたゼロ，初回，欠測，権限エラー，範囲外をfixtureで検証する．欠測を0msにしない．新しい生カウンタは追加しない．
+- PSI・10s trend・更新間隔を短い説明へ変更．通常の詳細は引き続き20行以内．
+- READMEへA（CPU93%・wait0.2%）とB（CPU92%・wait28%）のGIFとPNGを追加．各GIFはRendererへ100ms刻みで渡した24フレーム，計2.4秒．同じ観測のまま，キーだけを動かす．画像の確認でサイズ800×480，総時間2.4秒，キー以外にフレーム差分がないことを検証した．GIFでは同一フレームがまとめられ，12フレームになる．
+
+通常テスト52件．実機の高負荷ワークロードは起動していない．動画は合成表示例であり，負荷実験結果や新しい記録再生機能ではない．

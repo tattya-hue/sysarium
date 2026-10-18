@@ -3,21 +3,21 @@
 │  CPU time doing work (approx.).      │
 │                                      │
 │CPU wait     N/A                      │
-│  Time with any task waiting for CPU. │
-│  PSI = Pressure Stall Information.   │
-│  Usage and wait can both be high.    │
-│  10s trend  N/A  (smoothed wait)     │
+│  Time when tasks had to wait for CPU.│
+│  10s trend  N/A  (recent CPU wait)   │
+│  PSI: Linux's CPU-wait measure.      │
 │  Sample #2: Source missing; this metr│
 │ic may be unsupported.                │
 │                                      │
 │Runnable     2                        │
-│  Running + ready tasks.              │
+│  Running + ready to run.             │
 │                                      │
-│Window       1.000 s · Time between th│
-│e last two readings.                  │
+│Updated      Every 1.000 s            │
 │Sources      /proc/stat · /proc/pressu│
 │re/cpu                                │
 │Raw data     sysarium --json          │
+│                                      │
+│                                      │
 │                                      │
 │                                      │
 │                                      │

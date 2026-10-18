@@ -10,15 +10,15 @@
 │q / Ctrl-C Quit                                                               │
 │                                                                              │
 │CPU usage  Working: CPU time doing work (approx.).                            │
-│CPU wait   Waiting: time with any task waiting for CPU.                       │
+│CPU wait   Time when tasks had to wait for CPU.                               │
+│Wait time  Milliseconds with any task waiting; not per-task totals.           │
 │Usage and wait can both be high.                                              │
-│PSI        Pressure Stall Information; measures contention.                   │
-│10s trend  Smoothed CPU wait over ~10 seconds.                                │
-│Runnable   Running + ready tasks; not a waiting count.                        │
+│PSI        Linux measures how long tasks wait for CPU.                        │
+│10s trend  Recent CPU wait, smoothed over ~10s.                               │
+│Runnable   Running + ready to run; not a waiting count.                       │
 │                                                                              │
-│Keyboard activity follows CPU usage.                                          │
+│Keyboard   Faster key pulses = higher CPU usage.                              │
 │Papers reflect CPU wait; not a task count.                                    │
 │N/A or ? = unknown. First reading needs ~1s.                                  │
 │Charts: past → now, 0–100%, up to 120 readings.                               │
-│▁ = zero / near zero; ? = missing.                                            │
 └ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘
