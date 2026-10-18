@@ -96,8 +96,12 @@ fn p3_export_review_snapshots() {
             .unwrap();
         }
     }
-    for (name, key, width, height) in [("details-d", 'i', 40, 24), ("help", '?', 80, 24)] {
-        let mut app = p3_app("d");
+    for (name, key, width, height) in [
+        ("details-d", 'i', 40, 24),
+        ("details-b", 'i', 80, 24),
+        ("help", '?', 80, 24),
+    ] {
+        let mut app = p3_app(if name == "details-b" { "b" } else { "d" });
         press(&mut app, KeyCode::Char(key));
         let snapshot = render(&app, width, height)
             .lines()
@@ -216,19 +220,12 @@ fn fixture_pipeline_retains_both_axes_and_shared_observation() {
 
 #[test]
 fn supported_sizes_preserve_primary_values_without_technical_clutter() {
-    for (width, height) in [
-        (140, 34),
-        (120, 32),
-        (100, 24),
-        (80, 24),
-        (60, 24),
-        (40, 24),
-    ] {
+    for (width, height) in [(140, 34), (120, 32), (100, 24), (80, 24)] {
         for mode in [ViewMode::Living, ViewMode::Metrics, ViewMode::Split] {
             let mut app = p3_app("b");
             app.mode = mode;
             let out = render(&app, width, height);
-            for label in ["92.0%", "28.0%", "i 詳細", "q 終了"] {
+            for label in ["92.0%", "28.0%", "i 指標の詳細", "q 終了"] {
                 assert!(
                     out.contains(label),
                     "{label}: {width}x{height} {mode:?}\n{out}"
@@ -251,7 +248,7 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
 }
 
 #[test]
-fn unavailable_is_visible_and_full_reasons_are_in_live_details() {
+fn unavailable_has_readable_live_details_and_lossless_json() {
     let mut app = App::new(fixture(1));
     let out = render(&app, 80, 24);
     assert!(out.contains("N/A"));
@@ -270,23 +267,29 @@ fn unavailable_is_visible_and_full_reasons_are_in_live_details() {
             .as_ref()
             .unwrap()
             .text
+            .contains("読み取りエラー")
+    );
+    assert!(
+        crate::output::json(&app.analysis)
+            .unwrap()
+            .contains(&"specific context ".repeat(100))
+    );
+    assert!(
+        !app.overlay
+            .as_ref()
+            .unwrap()
+            .text
             .contains(&"specific context ".repeat(100))
     );
     press(&mut app, KeyCode::PageDown);
     let offset = app.overlay.as_ref().unwrap().scroll;
     app.observe(fixture(3));
     let details = app.overlay.as_ref().unwrap();
-    assert!(details.title.contains("sample_id=3"));
-    assert!(details.text.contains("source_sample_id=3"));
+    assert!(details.title.contains("#3"));
+    assert!(!details.text.contains("source_sample_id"));
     assert_eq!(details.scroll, offset.min(details.max_scroll(80, 24)));
     app.observe(fixture(4)); // both samples healthy again
-    assert!(
-        app.overlay
-            .as_ref()
-            .unwrap()
-            .text
-            .contains("source_sample_id=4")
-    );
+    assert!(app.overlay.as_ref().unwrap().title.contains("#4"));
     assert!(
         !app.overlay
             .as_ref()
@@ -345,7 +348,7 @@ fn rendering_is_pure_animation_requires_activity_and_does_not_change_pressure() 
 }
 
 #[test]
-fn resize_reflows_and_clears_old_pressure_even_at_zero_size() {
+fn resize_clears_old_pressure_and_restores_full_scene() {
     let mut app = p3_app("b");
     let mut terminal = Terminal::new(TestBackend::new(140, 34)).unwrap();
     terminal
@@ -365,7 +368,7 @@ fn resize_reflows_and_clears_old_pressure_even_at_zero_size() {
         );
         let out = text(&terminal);
         assert!(!out.contains("│ ──── │"));
-        if width >= 40 {
+        if width >= 80 {
             assert!(out.contains("N/A"));
             assert!(out.contains('?'));
         }
@@ -373,8 +376,6 @@ fn resize_reflows_and_clears_old_pressure_even_at_zero_size() {
     let (a, b) = renderer::split_areas(Rect::new(0, 0, 76, 19));
     assert_eq!(a.y, b.y);
     assert!(a.right() < b.x);
-    let (a, b) = renderer::split_areas(Rect::new(0, 0, 60, 19));
-    assert!(a.bottom() < b.y);
 }
 
 #[test]
@@ -427,7 +428,7 @@ fn export_svg(app: &App, width: u16, height: u16, path: &std::path::Path) {
         _ => "#e2e8ed".into(),
     };
     let mut svg = format!(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\" viewBox=\"0 0 {} {}\"><title>Inside · synthetic fixture · {width}×{height}</title>",
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" height=\"{}\" viewBox=\"0 0 {} {}\"><title>Sysarium · synthetic fixture · {width}×{height}</title>",
         width * 10,
         height * 20,
         width * 10,
@@ -446,7 +447,7 @@ fn export_svg(app: &App, width: u16, height: u16, path: &std::path::Path) {
             while x < width && terminal.backend().buffer()[(x, y)].bg == bg {
                 x += 1;
             }
-            if bg != Color::Rgb(19, 25, 38) {
+            if bg != Color::Rgb(19, 25, 38) && bg != Color::Reset {
                 svg.push_str(&format!(
                     "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"20\" fill=\"{}\"/>\n",
                     start * 10,
@@ -475,4 +476,72 @@ fn export_svg(app: &App, width: u16, height: u16, path: &std::path::Path) {
     }
     svg.push_str("</svg>\n");
     std::fs::write(path, svg).unwrap();
+}
+
+#[test]
+fn body_and_limbs_are_symmetric_in_both_work_poses() {
+    let reflect = |c| match c {
+        '╭' => '╮',
+        '╮' => '╭',
+        '╰' => '╯',
+        '╯' => '╰',
+        '├' => '┤',
+        '┤' => '├',
+        c => c,
+    };
+    for elapsed in [Duration::ZERO, Duration::from_millis(300)] {
+        let out = render_at(&app(), 80, 24, elapsed);
+        let lines: Vec<_> = out.lines().collect();
+        let top = lines
+            .iter()
+            .position(|line| line.contains("╭────────────────╮"))
+            .unwrap();
+        let x = lines[top].chars().position(|c| c == '╭').unwrap() - 3;
+        for line in &lines[top + 8..=top + 16] {
+            let body: Vec<_> = line.chars().skip(x).take(24).collect();
+            let mirrored: Vec<_> = body.iter().rev().copied().map(reflect).collect();
+            assert_eq!(body, mirrored, "unbalanced body: {line}");
+        }
+    }
+}
+
+#[test]
+fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
+    let mut app = p3_app("b");
+    let mut terminal = Terminal::new(TestBackend::new(80, 24)).unwrap();
+    for (width, height) in [
+        (80, 24),
+        (79, 24),
+        (80, 23),
+        (40, 24),
+        (28, 9),
+        (1, 1),
+        (0, 0),
+        (80, 24),
+    ] {
+        terminal.backend_mut().resize(width, height);
+        terminal.resize(Rect::new(0, 0, width, height)).unwrap();
+        terminal
+            .draw(|frame| renderer::draw(frame, &app, Duration::ZERO))
+            .unwrap();
+        let out = text(&terminal);
+        if width >= 80 && height >= 24 {
+            assert!(out.contains('◡'));
+            assert!(out.contains("╰───╯╰───╯"));
+            assert!(out.contains("Tab 表示切替"));
+        } else {
+            assert!(!out.contains('◡'));
+            assert!(!out.contains("╰───╯╰───╯"));
+            if width >= 40 && height >= 10 {
+                assert!(out.contains("80列 × 24行以上"));
+                assert!(out.contains("92.0%"));
+                assert!(out.contains("28.0%"));
+            }
+        }
+    }
+    app.resize(40, 24);
+    app.observe(p3_observation("d", 3));
+    assert_eq!(app.analysis.source_sample_id, 3);
+    assert!(render(&app, 40, 24).contains("CPU pressure N/A"));
+    assert!(press(&mut app, KeyCode::Char('q')));
 }

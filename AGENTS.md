@@ -1,4 +1,4 @@
-# Codex project instructions — Inside
+# Codex project instructions — Sysarium
 
 ## Role
 

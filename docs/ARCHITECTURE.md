@@ -5,7 +5,7 @@
 初期段階は「3 crateのCargo Workspace・1プロセス」のモジュラーモノリスとする．Agentを必須にしない．
 
 ```text
-inside/ (repository)
+sysarium/ (repository)
 ├── Cargo.toml
 ├── Cargo.lock
 ├── AGENTS.md
@@ -28,15 +28,15 @@ inside/ (repository)
 │       ├── cpu.rs
 │       └── psi.rs
 └── apps/
-    └── inside/src/
+    └── sysarium/src/
         ├── main.rs
-        ├── commands/
-        │   ├── status.rs
-        │   ├── inspect.rs
-        │   └── live.rs
+        ├── output.rs
+        ├── shutdown.rs
         └── tui/
+            ├── mod.rs
             ├── app.rs
-            └── renderer.rs
+            ├── renderer.rs
+            └── terminal.rs
 ```
 
 実装中に名前や小規模なファイル分割を調整してよいが，責務と依存方向は保持する．
@@ -44,13 +44,13 @@ inside/ (repository)
 ## 依存方向
 
 ```text
-apps/inside ─┬──> inside-core
+apps/sysarium ─┬──> inside-core
              └──> inside-linux ───> inside-core
 ```
 
 - `inside-core`：OSやUIに依存しない観測値の型，差分からの状態解析，説明，意味的Sceneモデル．Ratatuiやprocfsパーサを取り込まない．
 - `inside-linux`：Linuxの `/proc/stat` と `/proc/pressure/cpu` を読み，OS固有のパースと利用可能性の判定を行う．
-- `apps/inside`：CLI・TUI，ループ，表示切替，履歴バッファ，エラーと端末のライフサイクルを持つ．
+- `apps/sysarium`：CLI・TUI，ループ，表示切替，履歴バッファ，エラーと端末のライフサイクルを持つ．
 
 `inside-core`がOSファイルに直接アクセスしないことを優先する．抽象的なCollector traitを必要なく増やさず，テスト可能性がある最小APIに留める．
 
@@ -139,8 +139,8 @@ CPU PSI `some`の`total`は累積μs． `Δtotal_us / Δelapsed_us` は直近区
 
 - 観測：原則1 Hz．
 - 描画：最大10 FPSを初期目安とし，アニメーションとサンプリングを分離．
-- `inside`／`inside live`：約1Hzで継続観測し，最新解析と短期履歴で3表示を切り替える．初期表示はSplit．
-- `inside --json`：同じ取得・解析経路の結果を約1Hzで1行1JSONとしてflushする．初回も理由付きで出力する．
+- `sysarium`／`sysarium live`：約1Hzで継続観測し，最新解析と短期履歴で3表示を切り替える．初期表示はSplit．
+- `sysarium --json`：同じ取得・解析経路の結果を約1Hzで1行1JSONとしてflushする．初回も理由付きで出力する．
 - 単発のstatus／inspectは提供しない．取得元・単位・計算式・欠測理由はライブの詳細へ集約する．
 - エラー発生時：画面を落とすのではなく計測不能を示す．致命的な端末エラーでは終了処理で端末状態を復旧する．
 
@@ -150,6 +150,12 @@ Agent・IPC・GUI・記録再生・Simulationは**現段階で実装しない**�
 
 ## v0.1の詳細表示と終了処理
 
-通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
+通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．詳細はCPU・pressure・Runnable・観測・計算方法をまとめた人向けの説明とし，生のJSONと内部型は表示しない．完全な観測値・原因はNDJSONに保持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
 
-Unixの終了シグナルはアプリ側のフラグへ通知し，イベントループを終了して通常の端末復旧へ進む．signal-hookはapps/insideのみの依存とし，Core・Linux Collectorへ持ち込まない．シグナルハンドラ内で端末I/Oや解析は行わない．
+Unixの終了シグナルはアプリ側のフラグへ通知し，イベントループを終了して通常の端末復旧へ進む．signal-hookはapps/sysariumのみの依存とし，Core・Linux Collectorへ持ち込まない．シグナルハンドラ内で端末I/Oや解析は行わない．
+
+## 表示サイズと命名
+
+製品・アプリcrate・実行ファイルはsysarium，内部ライブラリは既存のinside-core／inside-linuxを維持する．アプリはapps/sysariumへ配置する．
+
+通常画面の最小サイズは80列×24行．Rendererはロボットに固定39×18セルの描画領域を使い，全身を配置する．それ未満の端末はサイズ案内とライブ主要値へ切り替え，観測・キー入力を継続する．端末ウィンドウ自体のリサイズを制限する操作はしない．大きさが戻れば通常描画を再開する．

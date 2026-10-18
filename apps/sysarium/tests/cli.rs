@@ -1,20 +1,20 @@
 use std::process::Command;
 
-fn inside() -> Command {
-    Command::new(env!("CARGO_BIN_EXE_inside"))
+fn sysarium() -> Command {
+    Command::new(env!("CARGO_BIN_EXE_sysarium"))
 }
 
 #[test]
 fn version_and_all_help_paths_work_without_a_terminal() {
-    let version = inside().arg("--version").output().unwrap();
+    let version = sysarium().arg("--version").output().unwrap();
     assert!(version.status.success());
     assert_eq!(
         String::from_utf8(version.stdout).unwrap(),
-        format!("inside {}\n", env!("CARGO_PKG_VERSION"))
+        format!("sysarium {}\n", env!("CARGO_PKG_VERSION"))
     );
     assert!(version.stderr.is_empty());
     for args in [vec!["--help"], vec!["live", "--help"]] {
-        let result = inside().args(args).output().unwrap();
+        let result = sysarium().args(args).output().unwrap();
         assert!(result.status.success());
         assert!(String::from_utf8(result.stdout).unwrap().contains("usage:"));
         assert!(result.stderr.is_empty());
@@ -27,7 +27,7 @@ fn process_stream_is_line_delimited_and_broken_pipe_exits_cleanly() {
         io::{BufRead, BufReader},
         process::Stdio,
     };
-    let mut child = inside()
+    let mut child = sysarium()
         .arg("--json")
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -60,7 +60,7 @@ fn invalid_options_and_non_tty_live_report_errors_only_on_stderr() {
         (vec!["live"], 1),
         (vec![], 1),
     ] {
-        let result = inside().args(args).output().unwrap();
+        let result = sysarium().args(args).output().unwrap();
         assert_eq!(result.status.code(), Some(code));
         assert!(result.stdout.is_empty());
         assert!(!result.stderr.is_empty());
@@ -71,7 +71,7 @@ fn invalid_options_and_non_tty_live_report_errors_only_on_stderr() {
 #[test]
 fn invalid_utf8_arguments_are_a_usage_error_instead_of_a_panic() {
     use std::{ffi::OsString, os::unix::ffi::OsStringExt};
-    let result = inside()
+    let result = sysarium()
         .arg(OsString::from_vec(vec![0xff]))
         .output()
         .unwrap();

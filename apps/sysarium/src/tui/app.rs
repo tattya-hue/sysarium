@@ -159,30 +159,17 @@ impl App {
     }
 
     fn details(&self) -> Overlay {
-        let scene = &self.scene;
-        let text = format!(
-            "最新の観測に追随します．\n\n{}\n表示用Scene（実測値とは区別）\nsource_sample_id={}\nactivity_intensity={:?}\npressure_level={:?}\nrepresents=cpu_contention_metaphor\n活動EMA alpha={}\n山の境界（割合）={:?}\n山は競合の比喩であり待機タスク数ではない．",
-            crate::output::text(&self.analysis, true),
-            scene.source_sample_id,
-            scene.character.activity_intensity,
-            scene.task_stack.pressure_level,
-            inside_core::scene::ACTIVITY_SMOOTHING_ALPHA,
-            inside_core::scene::PRESSURE_THRESHOLDS
-        );
         Overlay {
             kind: OverlayKind::Details,
-            title: format!(
-                "Details · LIVE · sample_id={}",
-                self.analysis.source_sample_id
-            ),
-            text,
+            title: format!("指標の詳細 · LIVE · #{}", self.analysis.source_sample_id),
+            text: crate::output::details(&self.analysis),
             scroll: 0,
         }
     }
 
     fn help() -> Overlay {
         let text = format!(
-            "Inside {}\n\nTab / 1・2・3: Living / Metrics / Split\ni: ライブ詳細   ?: ヘルプ   Esc: 閉じる\n↑↓ / PgUp / PgDn / Home: 詳細をスクロール\nq / Ctrl-C: 終了\n\nCPU: CPU活動時間の割合（本プロジェクトの近似値）．\nキャラクターの手の動きは活動量に応じて変化します．\n表示用の平滑化を行い，数値自体は変更しません．\n\nCPU pressure: PSI someの区間割合．CPUを待つタスクが少なくとも1つある時間の割合です．\n積まれた書類は競合の強さの比喩で，待機タスク数ではありません．\n段階の境界: 0.5 / 2 / 5 / 10 / 25%（暫定）．\navg10: カーネルの平滑化された傾向．区間値とは異なります．\nRunnable: 実行中も含む参考値．待機数ではありません．\n\nN/A・?: 不明．初回は差分がなく，約1秒後から表示します．\n履歴: 左が過去，右が最新．最大120観測，縦軸0〜100%．\n▁は計測できたゼロ，?は欠測です．\n\n観測は約1Hz，描画は最大10FPS．詳細もライブ更新します．\niで取得元・単位・計算式・sample_id・欠測理由を確認できます．\nsystem-view: 可視の/procの範囲で，物理ホスト全体とは限りません．",
+            "Sysarium {}\n\nTab: 表示切替（Living → Metrics → Split）\n1・2・3: 各表示を直接選択\ni: ライブ詳細   ?: ヘルプ   Esc: 閉じる\n↑↓ / PgUp / PgDn / Home: 詳細をスクロール\nq / Ctrl-C: 終了\n\nCPU: CPU活動時間の割合（本プロジェクトの近似値）．\nキャラクターの手の動きは活動量に応じて変化します．\n表示用の平滑化を行い，数値自体は変更しません．\n\nCPU pressure: PSI someの区間割合．CPUを待つタスクが少なくとも1つある時間の割合です．\n積まれた書類は競合の強さの比喩で，待機タスク数ではありません．\n段階の境界: 0.5 / 2 / 5 / 10 / 25%（暫定）．\navg10: カーネルの平滑化された傾向．区間値とは異なります．\nRunnable: 実行中も含む参考値．待機数ではありません．\n\nN/A・?: 不明．初回は差分がなく，約1秒後から表示します．\n履歴: 左が過去，右が最新．最大120観測，縦軸0〜100%．\n▁は計測できたゼロ，?は欠測です．\n\n観測は約1Hz，描画は最大10FPS．詳細もライブ更新します．\n通常画面は80列×24行以上．小さい端末ではサイズ案内を表示します．\niで取得元・単位・計算方法・欠測理由を確認できます．\nsystem-view: 可視の/procの範囲で，物理ホスト全体とは限りません．",
             env!("CARGO_PKG_VERSION")
         );
         Overlay {

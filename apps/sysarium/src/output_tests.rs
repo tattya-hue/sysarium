@@ -27,7 +27,7 @@ fn render(inspect: bool, modify: impl Fn(&mut Observation)) -> String {
     modify(&mut current);
     let analysis = analyze(Some(&previous), &current);
     if inspect {
-        output::text(&analysis, true)
+        output::details(&analysis)
     } else {
         output::json(&analysis).unwrap()
     }
@@ -131,21 +131,19 @@ fn first_sample_output_does_not_claim_zero_activity() {
         "first_sample"
     );
     assert!(value["metrics"]["cpu_active_ratio"]["value"].is_null());
-    let text = output::text(&analysis, false);
-    assert!(text.contains("CPU活動量（本プロジェクトの近似値）: N/A"));
-    assert!(text.contains("CPU PSI some 区間割合: N/A"));
+    let text = output::details(&analysis);
+    assert!(text.contains("活動量    N/A"));
+    assert!(text.contains("区間      N/A"));
 }
 
 #[test]
 fn live_details_explain_values_units_and_inputs() {
     let inspect = render(true, |_| {});
-    assert!(inspect.contains("80.000 %"));
-    assert!(inspect.contains("25.000 %"));
-    assert!(inspect.contains("2.500 %"));
-    assert!(inspect.contains("実行中を含む参考値"));
+    assert!(inspect.contains("80.0%"));
+    assert!(inspect.contains("25.0%"));
+    assert!(inspect.contains("2.5%"));
+    assert!(inspect.contains("実行中を含む"));
     for detail in [
-        "previous 観測値",
-        "current 観測値",
         "USER_HZ",
         "μs",
         "単調時計",
@@ -163,7 +161,11 @@ fn live_details_explain_values_units_and_inputs() {
         }
     });
     assert!(text.contains("N/A"));
-    assert!(text.contains("permission_denied"));
+    assert!(text.contains("読む権限がありません"));
+    assert!(!text.contains("permission_denied"));
+    for raw in ["source_sample_id", "total_us", "\"value\"", "Ok(", "Err("] {
+        assert!(!text.contains(raw));
+    }
 }
 
 #[test]

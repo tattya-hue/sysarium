@@ -40,8 +40,8 @@ jobs:
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: Release build and source installation
         run: |
-          cargo build --release --locked -p inside
-          cargo install --path apps/inside --locked --root "$RUNNER_TEMP/inside-install"
-          "$RUNNER_TEMP/inside-install/bin/inside" --version
+          cargo build --release --locked -p sysarium
+          cargo install --path apps/sysarium --locked --root "$RUNNER_TEMP/sysarium-install"
+          "$RUNNER_TEMP/sysarium-install/bin/sysarium" --version
       - name: Terminal restoration and signals
-        run: python3 apps/inside/tests/verify_terminal.py
+        run: python3 apps/sysarium/tests/verify_terminal.py

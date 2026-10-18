@@ -33,7 +33,7 @@ fn command(args: &[String]) -> Result<Command, &'static str> {
         ["--json"] | ["live", "--json"] => Ok(Command::Json),
         ["--help" | "-h"] | ["live", "--help" | "-h"] => Ok(Command::Help),
         ["--version" | "-V"] => Ok(Command::Version),
-        _ => Err("usage: inside [live] [--json] | inside --help | inside --version"),
+        _ => Err("usage: sysarium [live] [--json] | sysarium --help | sysarium --version"),
     }
 }
 
@@ -59,10 +59,10 @@ fn sample(sample_id: u64, previous: Option<Instant>) -> io::Result<(Observation,
 
 fn run(command: Command, out: &mut impl Write) -> io::Result<()> {
     match command {
-        Command::Version => writeln!(out, "inside {}", env!("CARGO_PKG_VERSION")),
+        Command::Version => writeln!(out, "sysarium {}", env!("CARGO_PKG_VERSION")),
         Command::Help => writeln!(
             out,
-            "usage: inside [live] [--json]\n\n引数なしでライブ監視を開始します．\nTab / 1・2・3: 表示切替  i: ライブ詳細  ?: ヘルプ  q: 終了\n--json: 約1秒ごとのNDJSONストリーム（Ctrl-Cで終了）．\n対象: Linuxのsystem-view．TUIはstdin/stdoutに端末が必要です．"
+            "usage: sysarium [live] [--json]\n\n引数なしでライブ監視を開始します．\nTab / 1・2・3: 表示切替  i: ライブ詳細  ?: ヘルプ  q: 終了\n--json: 約1秒ごとのNDJSONストリーム（Ctrl-Cで終了）．\n対象: Linuxのsystem-view．TUIはstdin/stdoutに端末が必要です．"
         ),
         Command::Live => tui::run(),
         Command::Json => {
@@ -116,7 +116,7 @@ fn main() -> ExitCode {
     {
         Ok(args) => args,
         Err(_) => {
-            eprintln!("inside: arguments must be valid UTF-8");
+            eprintln!("sysarium: arguments must be valid UTF-8");
             return ExitCode::from(2);
         }
     };
@@ -132,7 +132,7 @@ fn main() -> ExitCode {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) if error.kind() == io::ErrorKind::BrokenPipe => ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("inside: {error}");
+            eprintln!("sysarium: {error}");
             ExitCode::FAILURE
         }
     }

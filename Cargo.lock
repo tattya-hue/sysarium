@@ -232,18 +232,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "inside"
-version = "0.1.0"
-dependencies = [
- "crossterm",
- "inside-core",
- "inside-linux",
- "ratatui",
- "serde_json",
- "signal-hook",
-]
-
-[[package]]
 name = "inside-core"
 version = "0.1.0"
 
@@ -732,6 +720,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "sysarium"
+version = "0.1.0"
+dependencies = [
+ "crossterm",
+ "inside-core",
+ "inside-linux",
+ "ratatui",
+ "serde_json",
+ "signal-hook",
 ]
 
 [[package]]

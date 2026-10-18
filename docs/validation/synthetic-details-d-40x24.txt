@@ -1,24 +1,24 @@
-┌ Details · LIVE · sample_id=2 ────────┐
-│最新の観測に追随します．              │
+┌ 指標の詳細 · LIVE · #2 ──────────────┐
+│CPU                                   │
+│  活動量    85.0%                     │
+│  CPUが仕事をしていた時間の割合（近似 │
+│）．                                  │
 │                                      │
-│Inside 0.1.0 | sample_id=2 | sampled_a│
-│t_unix_ms=2000                        │
-│scope: system-view                    │
-│CPU活動量（本プロジェクトの近似値）: 8│
-│5.000 % | source=/proc/stat           │
-│CPU PSI some 区間割合: N/A ({"code":"i│
-│nput_unavailable","reason":{"code":"no│
-│t_found"},"sample_id":2,"source":"/pro│
-│c/pressure/cpu"}) | source=/proc/press│
-│ure/cpu                               │
-│CPU PSI some avg10（平滑化傾向）: N/A │
-│({"code":"input_unavailable","reason":│
-│{"code":"not_found"},"sample_id":2,"so│
-│urce":"/proc/pressure/cpu"})          │
-│procs_running（実行中を含む参考値）: 2│
-│ runnable tasks | source=/proc/stat   │
-│観測区間（単調時計）: 1.000000000 s   │
-│活動と競合は独立した2軸．0は観測できた│
-│ゼロ，N/Aは取得・解析不能．           │
-│system-viewは可視の/procの範囲．コンテ│
-└ ↑↓ PgUp/PgDn Home · Esc 戻る · q 終了┘
+│CPU pressure                          │
+│  区間      N/A                       │
+│  CPUを待つタスクがある時間の割合．   │
+│  観測 #2: 計測ファイルがありません（ │
+│未対応の可能性）                      │
+│  avg10     N/A  （平滑化された傾向） │
+│                                      │
+│Runnable                              │
+│  2 タスク  （実行中を含む．待機数では│
+│ない）                                │
+│                                      │
+│観測                                  │
+│  区間 1.000 s · 単調時計 · 約1秒ごと │
+│に更新                                │
+│  対象 system-view · 可視の/procの範囲│
+│                                      │
+│計算と取得元                          │
+└ ↑↓ スクロール · Esc 戻る · q 終了 ───┘

@@ -4,7 +4,7 @@
 
 ## 出荷内容
 
-最初の配布は，Gitの正式タグに対応したソース配布とする．製品名・コマンドはInside／`inside`，リポジトリ名はsysarium．LinuxでRust 1.88以降を使い，`Cargo.lock`を固定してビルドする．GUI・Agent・Simulationや長期保存は含めない．公開候補の内容・制約は`CHANGELOG.md`にまとめる．
+最初の配布は，Gitの正式タグに対応したソース配布とする．製品名・コマンドはSysarium／`sysarium`，リポジトリ名はsysarium．LinuxでRust 1.88以降を使い，`Cargo.lock`を固定してビルドする．GUI・Agent・Simulationや長期保存は含めない．公開候補の内容・制約は`CHANGELOG.md`にまとめる．
 
 ## 判定表
 
@@ -25,19 +25,19 @@
 
 ## 技術検証の再実行
 
-公開対象コミットを新しいディレクトリへcloneしてから実行する．手元の未追跡ファイル・既存target・グローバルPATHのinsideへ依存しないことを確認する．
+公開対象コミットを新しいディレクトリへcloneしてから実行する．手元の未追跡ファイル・既存target・グローバルPATHのsysariumへ依存しないことを確認する．
 
 ```sh
 git status --porcelain
 cargo fmt --all -- --check
 cargo test --workspace --locked
 cargo clippy --workspace --all-targets --locked -- -D warnings
-python3 apps/inside/tests/verify_terminal.py
+python3 apps/sysarium/tests/verify_terminal.py
 cargo +1.88.0 test --workspace --locked
-cargo +1.88.0 build --release --locked -p inside
-cargo install --path apps/inside --locked --root "$PWD/target/install-check"
-./target/install-check/bin/inside --version
-./target/install-check/bin/inside --json | head -n 2
+cargo +1.88.0 build --release --locked -p sysarium
+cargo install --path apps/sysarium --locked --root "$PWD/target/install-check"
+./target/install-check/bin/sysarium --version
+./target/install-check/bin/sysarium --json | head -n 2
 git status --porcelain
 ```
 
@@ -61,7 +61,7 @@ git status --porcelain
 
 ### 端末と理解度（5〜10分程度）
 
-実端末またはSSHのPTYで`inside live`を起動する．80×24以上から始め，40×24へ縮小して元へ戻す．Tab，i，?，スクロール，Esc，qを試す．
+実端末またはSSHのPTYで`sysarium live`を起動する．80×24以上から始め，40×24へ縮小して元へ戻す．Tab，i，?，スクロール，Esc，qを試す．
 
 - 日本語とPC・山が崩れず，CPU・PSI・runnableの値を読めるか．
 - LivingとMetricsが同時に変化する状態を対応付けられるか（sample_idはiで確認）．
@@ -103,3 +103,7 @@ git status --porcelain
 ## ライブ中心改訂後の確認
 
 `inside`でSplitを開き，`inside --json`はNDJSONを継続出力する．旧status／inspectは提供しない．新CLI・レイアウトの通常テスト，fmt，Clippy，最小Rust，releaseビルド，PTYの結果は`docs/P3-VALIDATION.md`を参照．旧候補のアーカイブは今回の改訂を含まないため，公開時には最終コミットから作り直す．
+
+## Sysariumへの改称後
+
+現行アプリはapps/sysarium，crate・実行ファイルはsysarium．新しい起動は`cargo run --release -p sysarium`，インストールは`cargo install --path apps/sysarium --locked`．旧候補のinsideと書かれた記録・アーカイブは当時の名称・旧表示を指し，現行候補とは区別する．ロボット全身表示は80×24以上を必要とし，小さい端末では案内とライブ主要値を表示する．

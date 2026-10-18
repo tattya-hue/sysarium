@@ -83,16 +83,16 @@ def verify(args, interactive=False, terminate_signal=None):
 
 
 def main():
-    subprocess.run(["cargo", "build", "-p", "inside"], cwd=ROOT, check=True)
-    verify([str(ROOT / "target/debug/inside")], interactive=True)
+    subprocess.run(["cargo", "build", "-p", "sysarium"], cwd=ROOT, check=True)
+    verify([str(ROOT / "target/debug/sysarium")], interactive=True)
     for stop_signal in [signal.SIGTERM, signal.SIGHUP, signal.SIGINT]:
-        verify([str(ROOT / "target/debug/inside"), "live"], terminate_signal=stop_signal)
+        verify([str(ROOT / "target/debug/sysarium"), "live"], terminate_signal=stop_signal)
     for name in ["restores_after_error", "restores_after_panic"]:
         verify([
-            "cargo", "test", "-p", "inside", f"tui::terminal::tests::{name}", "--",
+            "cargo", "test", "-p", "sysarium", f"tui::terminal::tests::{name}", "--",
             "--ignored", "--exact", "--nocapture", "--test-threads=1",
         ])
-    result = subprocess.run([str(ROOT / "target/debug/inside"), "live"], capture_output=True)
+    result = subprocess.run([str(ROOT / "target/debug/sysarium"), "live"], capture_output=True)
     assert result.returncode == 1 and result.stdout == b"" and b"requires a terminal" in result.stderr
     print("PASS: non-TTY rejection (stdout empty)")
 

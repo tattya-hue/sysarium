@@ -2,7 +2,7 @@
 
 **このディレクトリの画面は合成データであり，実機負荷測定の結果ではない．**
 
-`synthetic-{a,b,c,d}-{140x34,100x24,80x24,40x24}.txt`は，P3のfixtureをLinux Collector・Core・Scene・Ratatui TestBackendへ通したSplit画面．描画時刻は0，sample_idは2．UTF-8の端末セルを文字列化し，行末の空白と末尾の空行を除去している．詳細・ヘルプの追加2画面も同じ合成データから生成する．
+`synthetic-{a,b,c,d}-{140x34,100x24,80x24,40x24}.txt`は，P3のfixtureをLinux Collector・Core・Scene・Ratatui TestBackendへ通したSplit画面．描画時刻は0，sample_idは2．UTF-8の端末セルを文字列化し，行末の空白と末尾の空行を除去している．詳細・ヘルプの追加3画面も同じ合成データから生成する．
 
 - [A：高活動・低競合，80×24](synthetic-a-80x24.txt)
 - [B：高活動・高競合，80×24](synthetic-b-80x24.txt)
@@ -24,3 +24,9 @@
 - [D：欠測（色付き）](synthetic-d-80x24.svg)
 
 SVGの見え方は閲覧側のフォントにも依存する．
+
+## 全身・詳細の改訂
+
+キャラクターは顔・胴体・腕・足を持つロボットへ変更した．40×24の通常画面は縮小キャラクターではなく必要サイズの案内となる．詳細は指標ごとに整理し，80×24の通常データも追加した．
+
+- [指標の詳細，80×24](synthetic-details-b-80x24.txt)

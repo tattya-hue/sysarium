@@ -34,7 +34,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             .min(overlay.max_scroll(area.width, area.height));
         let border = Block::bordered()
             .title(format!(" {} ", overlay.title))
-            .title_bottom(" ↑↓ PgUp/PgDn Home · Esc 戻る · q 終了 ")
+            .title_bottom(" ↑↓ スクロール · Esc 戻る · q 終了 ")
             .border_style(Style::default().fg(LINE));
         let inner = border.inner(area);
         frame.render_widget(Clear, area);
@@ -42,9 +42,36 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         let lines: Vec<Line<'static>> = overlay
             .wrapped_lines(inner.width)
             .into_iter()
-            .map(Line::raw)
+            .map(|text| {
+                let color = match text.as_str() {
+                    "CPU" => MINT,
+                    "CPU pressure" => AMBER,
+                    _ => INK,
+                };
+                let heading = [
+                    "CPU",
+                    "CPU pressure",
+                    "Runnable",
+                    "観測",
+                    "計算と取得元",
+                    "読み方",
+                ]
+                .contains(&text.as_str());
+                Line::styled(
+                    text,
+                    Style::default().fg(color).add_modifier(if heading {
+                        Modifier::BOLD
+                    } else {
+                        Modifier::empty()
+                    }),
+                )
+            })
             .collect();
         frame.render_widget(Paragraph::new(lines).scroll((scroll, 0)), inner);
+        return;
+    }
+    if area.width < 80 || area.height < 24 {
+        small_terminal(frame, area, app);
         return;
     }
     let outer = area.inner(Margin::new(
@@ -65,7 +92,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
     frame.render_widget(
         Paragraph::new(Line::from(vec![
             Span::styled(
-                "inside",
+                "sysarium",
                 Style::default().fg(INK).add_modifier(Modifier::BOLD),
             ),
             Span::styled("  ● LIVE", Style::default().fg(MINT)),
@@ -97,7 +124,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
     match app.mode {
         ViewMode::Living => {
             let pieces =
-                Layout::vertical([Constraint::Min(0), Constraint::Length(2)]).split(rows[1]);
+                Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
             let badges = format!(
                 "CPU {}     Pressure {}",
@@ -118,11 +145,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             metrics(frame, right, app);
         }
     }
-    let footer = if outer.width >= 48 {
-        "Tab 表示  ·  i 詳細  ·  ? ヘルプ  ·  q 終了"
-    } else {
-        "Tab 切替 · i 詳細 · ? · q 終了"
-    };
+    let footer = "Tab 表示切替  ·  i 指標の詳細  ·  ? ヘルプ  ·  q 終了";
     frame.render_widget(
         Paragraph::new(footer).style(Style::default().fg(MUTED)),
         rows[2],
@@ -130,23 +153,13 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
 }
 
 pub(super) fn split_areas(area: Rect) -> (Rect, Rect) {
-    if area.width >= 74 && area.height >= 16 {
-        let cols = Layout::horizontal([
-            Constraint::Percentage(58),
-            Constraint::Length(3),
-            Constraint::Min(0),
-        ])
-        .split(area);
-        (cols[0], cols[2])
-    } else {
-        let rows = Layout::vertical([
-            Constraint::Min(0),
-            Constraint::Length(1),
-            Constraint::Length(area.height.saturating_sub(1).min(9)),
-        ])
-        .split(area);
-        (rows[0], rows[2])
-    }
+    let cols = Layout::horizontal([
+        Constraint::Percentage(58),
+        Constraint::Length(3),
+        Constraint::Min(0),
+    ])
+    .split(area);
+    (cols[0], cols[2])
 }
 
 fn put(frame: &mut Frame, area: Rect, x: u16, y: u16, text: &str, color: Color) {
@@ -168,17 +181,15 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     if area.is_empty() {
         return;
     }
-    let rich = area.width >= 39 && area.height >= 15;
-    let (width, height) = if rich {
-        (39, 15)
-    } else {
-        (30.min(area.width), 7.min(area.height))
-    };
+    // 完全な姿を置けない領域には描かず，切れた手足や縮小版を作らない．
+    if area.width < 39 || area.height < 18 {
+        return;
+    }
     let stage = Rect::new(
-        area.x + area.width.saturating_sub(width) / 2,
-        area.y + area.height.saturating_sub(height) / 2,
-        width,
-        height,
+        area.x + (area.width - 39) / 2,
+        area.y + (area.height - 18) / 2,
+        39,
+        18,
     );
     let intensity = &app.scene.character.activity_intensity;
     let phase = match intensity {
@@ -190,116 +201,79 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     } else {
         "●    ●"
     };
-    if rich {
-        frame.render_widget(
-            Block::default().style(Style::default().bg(Color::Rgb(32, 65, 63))),
-            Rect::new(stage.x + 4, stage.y + 1, 16, 6),
-        );
-        frame.render_widget(
-            Block::default().style(Style::default().bg(Color::Rgb(23, 43, 46))),
-            Rect::new(stage.x + 6, stage.y + 2, 12, 4),
-        );
-        frame.render_widget(
-            Block::default().style(Style::default().bg(CARD)),
-            Rect::new(stage.x + 4, stage.y + 12, 14, 1),
-        );
-        let art = [
-            "   ╭────────────────╮".to_owned(),
-            "   │ ╭────────────╮ │".into(),
-            "   │ │            │ │".into(),
-            format!("   │ │   {eyes}   │ │"),
-            "   │ │     ◡      │ │".into(),
-            "   │ │            │ │".into(),
-            "   │ ╰────────────╯ │".into(),
-            "   ╰────────────────╯".into(),
-            " ╭──╯    ╭──╮    ╰──╮".into(),
-            if phase {
-                " ╰╮   ╭──┴──┴──╮  ╭─╯"
-            } else {
-                " ╰─╮  ╭──┴──┴──╮  ╭╯"
-            }
-            .into(),
-            "   ╰╯ ╰────────╯ ╰╯".into(),
-            "   ╭──────────────╮".into(),
-            if phase {
-                "   │ ▪ ▫ ▪ ▫ ▪ ▫  │"
-            } else {
-                "   │ ▫ ▪ ▫ ▪ ▫ ▪  │"
-            }
-            .into(),
-            "   ╰──────────────╯".into(),
-        ];
-        for (y, line) in art.iter().enumerate() {
-            put(frame, stage, 0, y as u16, line, MINT);
-        }
-        put(frame, stage, 9, 3, eyes, FACE);
-        put(frame, stage, 11, 4, "◡", FACE);
-        put(frame, stage, 8, 4, "·", CHEEK);
-        put(frame, stage, 16, 4, "·", CHEEK);
-        papers(
-            frame,
-            stage,
-            30,
-            13,
-            &app.scene.task_stack.pressure_level,
-            true,
-        );
-        put(
-            frame,
-            stage,
-            0,
-            14,
-            "───────────────────────────────────────",
-            LINE,
-        );
-    } else {
-        let art = [
-            " ╭──────────╮".into(),
-            format!(" │  {eyes}  │"),
-            " │    ◡     │".into(),
-            " ╰──────────╯".into(),
-            if phase {
-                "  ╯ ╭────╮ ╰"
-            } else {
-                "  ╰ ╭────╮ ╯"
-            }
-            .into(),
-            "   ╰──────╯".into(),
-        ];
-        for (y, line) in art.iter().enumerate() {
-            put(frame, stage, 0, y as u16, line, MINT);
-        }
-        papers(
-            frame,
-            stage,
-            21,
-            5,
-            &app.scene.task_stack.pressure_level,
-            false,
-        );
-        put(frame, stage, 0, 6, "──────────────────────────────", LINE);
+    frame.render_widget(
+        Block::default().style(Style::default().bg(Color::Rgb(32, 65, 63))),
+        Rect::new(stage.x + 4, stage.y + 1, 16, 6),
+    );
+    frame.render_widget(
+        Block::default().style(Style::default().bg(Color::Rgb(23, 43, 46))),
+        Rect::new(stage.x + 6, stage.y + 2, 12, 4),
+    );
+    frame.render_widget(
+        Block::default().style(Style::default().bg(CARD)),
+        Rect::new(stage.x + 7, stage.y + 10, 10, 3),
+    );
+    let head = [
+        "   ╭────────────────╮".to_owned(),
+        "   │ ╭────────────╮ │".into(),
+        "   │ │            │ │".into(),
+        format!("   │ │   {eyes}   │ │"),
+        "   │ │     ◡      │ │".into(),
+        "   │ │            │ │".into(),
+        "   │ ╰────────────╯ │".into(),
+        "   ╰────────────────╯".into(),
+    ];
+    for (y, line) in head.iter().enumerate() {
+        put(frame, stage, 0, y as u16, line, MINT);
     }
+    put(frame, stage, 9, 3, eyes, FACE);
+    put(frame, stage, 11, 4, "◡", FACE);
+    put(frame, stage, 8, 4, "·", CHEEK);
+    put(frame, stage, 15, 4, "·", CHEEK);
+    put(frame, stage, 10, 8, "│  │", MINT);
+    put(frame, stage, 6, 9, "╭───┴──┴───╮", MINT);
+    for y in 10..=12 {
+        put(frame, stage, 6, y, "│          │", MINT);
+    }
+    put(frame, stage, 3, 10, "╭──┤", MINT);
+    put(frame, stage, 17, 10, "├──╮", MINT);
+    if phase {
+        put(frame, stage, 3, 11, "╰─○", MINT);
+        put(frame, stage, 18, 11, "○─╯", MINT);
+    } else {
+        put(frame, stage, 3, 11, "│", MINT);
+        put(frame, stage, 20, 11, "│", MINT);
+        put(frame, stage, 3, 12, "╰─○", MINT);
+        put(frame, stage, 18, 12, "○─╯", MINT);
+    }
+    put(frame, stage, 11, 11, "●●", FACE);
+    put(frame, stage, 6, 13, "╰──────────╯", MINT);
+    put(frame, stage, 8, 14, "│ │  │ │", MINT);
+    put(frame, stage, 7, 15, "╭┴─┴╮╭┴─┴╮", MINT);
+    put(frame, stage, 7, 16, "╰───╯╰───╯", MINT);
+    papers(frame, stage, 30, 16, &app.scene.task_stack.pressure_level);
+    put(
+        frame,
+        stage,
+        0,
+        17,
+        "───────────────────────────────────────",
+        LINE,
+    );
     if intensity.is_err() {
         put(frame, area, 0, 0, "CPU N/A", AMBER);
     }
 }
 
-fn papers(
-    frame: &mut Frame,
-    area: Rect,
-    x: u16,
-    bottom: u16,
-    level: &Result<u8, Reason>,
-    rich: bool,
-) {
+fn papers(frame: &mut Frame, area: Rect, x: u16, bottom: u16, level: &Result<u8, Reason>) {
     match level {
         Err(_) => put(frame, area, x, bottom.saturating_sub(1), "  ?", AMBER),
         Ok(0) => {}
         Ok(level) => {
             let count = u16::from(*level);
-            let top = bottom.saturating_sub(if rich { count * 2 } else { count });
+            let top = bottom.saturating_sub(count * 2);
             for y in top..bottom {
-                let line = if rich && (y - top) % 2 == 1 {
+                let line = if (y - top) % 2 == 1 {
                     "│ ──── │"
                 } else {
                     "╭──────╮"
@@ -333,6 +307,7 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
         &app.analysis.cpu_active_ratio,
         app.history.iter().map(|p| p.activity).collect(),
         MINT,
+        None,
     );
     card(
         frame,
@@ -341,6 +316,10 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
         &app.analysis.cpu_psi_some_interval_ratio,
         app.history.iter().map(|p| p.pressure).collect(),
         AMBER,
+        Some(format!(
+            "avg10 {}",
+            value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
+        )),
     );
     let runnable = app
         .analysis
@@ -351,12 +330,7 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
         .value
         .as_ref()
         .map_or("N/A".into(), |v| v.to_string());
-    let avg = value(&app.analysis.cpu_psi_some_avg10_pct, 1.0);
-    let extra = if area.width >= 34 {
-        format!("avg10 {avg}     Runnable {runnable}")
-    } else {
-        format!("avg10 {avg}  Runnable {runnable}")
-    };
+    let extra = format!("Runnable {runnable}");
     frame.render_widget(
         Paragraph::new(extra).style(Style::default().fg(MUTED)),
         content[1],
@@ -370,6 +344,7 @@ fn card(
     metric: &Result<f64, Reason>,
     history: Vec<Option<f64>>,
     color: Color,
+    note: Option<String>,
 ) {
     if area.is_empty() {
         return;
@@ -394,7 +369,13 @@ fn card(
         Rect::new(inner.x, inner.y, inner.width, inner.height.min(1)),
     );
     if inner.height >= 2 {
-        let gap = u16::from(inner.height >= 5);
+        let gap = u16::from(note.is_some() || inner.height >= 5);
+        if let Some(note) = note {
+            frame.render_widget(
+                Paragraph::new(note).style(Style::default().fg(MUTED)),
+                Rect::new(inner.x, inner.y + 1, inner.width, 1),
+            );
+        }
         let graph = Rect::new(
             inner.x,
             inner.y + 1 + gap,
@@ -436,4 +417,48 @@ fn value(value: &Result<f64, Reason>, multiplier: f64) -> String {
     value
         .as_ref()
         .map_or("N/A".into(), |value| format!("{:.1}%", value * multiplier))
+}
+
+fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {
+    let mut lines = vec![
+        Line::styled(
+            "sysarium",
+            Style::default().fg(MINT).add_modifier(Modifier::BOLD),
+        ),
+        Line::raw(""),
+        Line::raw("表示領域が足りません"),
+        Line::raw("80列 × 24行以上が必要です"),
+        Line::styled(
+            format!("現在 {}列 × {}行", area.width, area.height),
+            Style::default().fg(MUTED),
+        ),
+    ];
+    if area.width >= 26 && area.height >= 10 {
+        lines.extend([
+            Line::raw(""),
+            Line::raw(format!(
+                "CPU {}",
+                value(&app.analysis.cpu_active_ratio, 100.0)
+            )),
+            Line::raw(format!(
+                "CPU pressure {}",
+                value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
+            )),
+        ]);
+    }
+    if area.width >= 20 && area.height >= 7 {
+        lines.push(Line::raw(""));
+        lines.push(Line::styled(
+            "q 終了 · ? ヘルプ",
+            Style::default().fg(MUTED),
+        ));
+    }
+    let height = (lines.len() as u16).min(area.height);
+    let rect = Rect::new(
+        area.x,
+        area.y + (area.height - height) / 2,
+        area.width,
+        height,
+    );
+    frame.render_widget(Paragraph::new(lines).alignment(Alignment::Center), rect);
 }

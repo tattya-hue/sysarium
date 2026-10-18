@@ -10,7 +10,7 @@
 
 ## ケースA〜D：取得から画面まで
 
-入力は`apps/inside/tests/fixtures/p3`．CPU累積値・PSI totalの前後差分と，単調時計に由来する1秒の観測区間を与え，Linuxパーサ → Core解析 → Scene → Ratatui TestBackendまで同じ経路を通す．フィクスチャの時刻も合成値．`procs_running`は全ケース2に固定する．
+入力は`apps/sysarium/tests/fixtures/p3`．CPU累積値・PSI totalの前後差分と，単調時計に由来する1秒の観測区間を与え，Linuxパーサ → Core解析 → Scene → Ratatui TestBackendまで同じ経路を通す．フィクスチャの時刻も合成値．`procs_running`は全ケース2に固定する．
 
 | ケース | CPU活動量 | PSI some区間割合 | 表示強度（初回の正常値） | 山 | 判定 |
 |---|---:|---:|---:|---|---|
@@ -36,8 +36,8 @@ Dと長いI/Oエラーでは，通常画面でN/Aが見え，正常なCPU指標�
 | サイズ | Splitの配置 | 内容検証 |
 |---|---|---|
 | 140×34，120×32，100×24，80×24 | 横並び | 余白を持つPC・書類と，CPU／pressureの現在値・履歴，avg10・Runnable |
-| 60×24，40×24 | 縦並び | 小さなPC・書類と，主要値・履歴を維持 |
-| 幅40未満または高さ24未満 | 利用可能な領域へ縮退 | 全情報の同時表示は保証しない |
+| 79×24，80×23，60×24，40×24 | サイズ案内 | キャラクターを縮小・切断せず，必要サイズとライブ主要値を表示 |
+| 28×9以下 | サイズ案内を入る範囲に表示 | q終了と，大きさを戻した際の通常描画を維持 |
 | 1×1，0×0 | 極小・非表示 | panicせず，元のサイズへ戻ると再描画 |
 
 通常画面からsample_id・取得元・理由全文・計算式と比喩の説明ラベルを外した．取得元・単位・原因は`i`，書類とPSIの意味・履歴の0〜100%スケールは`?`で確認できる．詳細も最新の同じAnalysisへ追随する．
@@ -52,13 +52,13 @@ Dと長いI/Oエラーでは，通常画面でN/Aが見え，正常なCPU指標�
 cargo fmt --all -- --check
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
-python3 apps/inside/tests/verify_terminal.py
+python3 apps/sysarium/tests/verify_terminal.py
 ```
 
 合成画面を再生成する場合のみ，専用のignoredテストを明示実行する．保存先は絶対パスで指定する．
 
 ```sh
-INSIDE_REVIEW_SNAPSHOTS="$PWD/docs/validation" cargo test -p inside tui::tests::p3_export_review_snapshots -- --ignored --exact
+INSIDE_REVIEW_SNAPSHOTS="$PWD/docs/validation" cargo test -p sysarium tui::tests::p3_export_review_snapshots -- --ignored --exact
 ```
 
 ## 制限環境での手動負荷検証（未実施）
@@ -67,8 +67,8 @@ INSIDE_REVIEW_SNAPSHOTS="$PWD/docs/validation" cargo test -p inside tui::tests::
 
 1. 専用Linux VMに2 vCPUを割り当て，ホスト側でもそのVMのCPU上限を2 vCPU分に制限する．共有・業務環境を使わない．観測対象はVM内のsystem-viewとする．コンテナのCPU制限だけで，その/procがホスト全体を表示する場合はこの比較に使用しない．
 2. VMのCPU一覧が0，1で，通常のrunnable・PSI取得が可能なことを確認する．kernel，VMの割当，CPU affinity，ツールのバージョンを記録する．PSI未対応なら未対応として記録し，比較成立としない．
-3. VM内でビルドを済ませ，`inside live`を80×24以上の別端末で開始する．負荷中にはコンパイルをしない．通常状態のJSONと画面を記録する．
-4. ケースAを人が1回起動する．起動直後の数秒を避け，別端末で`inside --json > case-a.ndjson`を開始し，数秒の継続データを保存してCtrl-Cで終了する．終了を確認してから次へ進む．
+3. VM内でビルドを済ませ，`sysarium live`を80×24以上の別端末で開始する．負荷中にはコンパイルをしない．通常状態のJSONと画面を記録する．
+4. ケースAを人が1回起動する．起動直後の数秒を避け，別端末で`sysarium --json > case-a.ndjson`を開始し，数秒の継続データを保存してCtrl-Cで終了する．終了を確認してから次へ進む．
 5. ケースBを人が1回起動して`case-b.ndjson`へ同様に記録する．同じVM・affinity・時間制限を使う．終了後に通常状態へ戻ったことを確認する．
 6. A/Bとも高活動になったか，CPU活動量が同程度か，BのPSI区間割合がAより大きいかを複数観測で比較する．条件が作れていなければ「比較条件未成立」と記録し，成功したことにしない．avg10の遅れは区間割合と別に読む．
 7. Living／Metrics／Splitを切り替え，山の意味が競合の段階として理解できるか，対応する数値とsample_idを追えるか，初回・欠測をゼロと誤読しないかを利用者に確認する．
@@ -94,11 +94,11 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 | 検証 | 結果 |
 |---|---|
 | `cargo fmt --all -- --check` | 成功 |
-| `cargo test --workspace` | 48件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
+| `cargo test --workspace` | 50件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
 | `cargo clippy --workspace --all-targets -- -D warnings` | 成功 |
-| `cargo +1.88.0 test --workspace --locked` | 48件成功（MSRV） |
-| `cargo build --release --locked -p inside` | 成功．release版のversion・継続NDJSON・初回欠測・SIGTERM終了も確認 |
-| 明示的な画面書出しテスト | 成功．A〜D×4サイズの16画面と詳細・ヘルプの2画面を保存 |
+| `cargo +1.88.0 test --workspace --locked` | 50件成功（MSRV） |
+| `cargo build --release --locked -p sysarium` | 成功．release版のversion・継続NDJSON・初回欠測・SIGTERM終了も確認 |
+| 明示的な画面書出しテスト | 成功．A〜D×4サイズの16画面と詳細・ヘルプの3画面を保存 |
 | 実PTYのlive | Tab，詳細・ヘルプ・スクロール，140×34→40×24→80×24，q終了，端末属性・画面・カーソル復旧を確認 |
 | 実PTYのエラー／panic注入 | 通常実行でignoreした2テストを個別実行し，両方成功 |
 | 非TTY | 終了コード1，stdoutを汚さず理由をstderrに出力 |
@@ -111,11 +111,21 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 
 単発のスナップショットより継続監視が必要，キャラクターが小さく説明文が多いという指摘を受けた．デフォルト起動・Split・レイアウト・キャラクター・履歴を変更した．旧画面のセル内容テストは視認性の保証にならなかったため，旧ラベルの存在を要求するテストを更新した．
 
-- 合成A〜Dから同じ取得・解析・Scene・描画経路を検証．各サイズ・全モードでCPUとpressureの現在値を読め，通常画面に山というラベルや内部ID・取得元が混入しない．
-- 詳細が最新sample_idへ追随し，取得時の原因全文を保持，復帰後は古い原因が残らない．スクロール位置を表示範囲へ制限する．
+- 合成A〜Dから同じ取得・解析・Scene・描画経路を検証．80×24以上の全モードでCPUとpressureの現在値を読め，通常画面に山というラベルや内部ID・取得元が混入しない．
+- 詳細が最新sample_idへ追随し，人向けに短くした原因を表示，復帰後は古い原因が残らない．完全な原因はNDJSONに保持．スクロール位置を表示範囲へ制限する．
 - 欠測は履歴上も?，計測できたゼロは▁．旧書類が欠測後に残らず，リサイズでも再出現しない．
 - JSONは初回を含む連続3観測のfixtureを1行ごとにパース．実プロセスの2観測・パイプ切断と正常終了も検証する．
 - 文字セル記録に加えて，実際のRatatuiバッファから色付きSVGを生成する．画像は合成fixtureであり実測ではない．
 - 実PTYの操作・シグナル・エラー／panicの復旧を引き続き検証する．高負荷ワークロードは起動しない．
 
 クリーンcloneの旧検証記録は`docs/RELEASE.md`へ残す．新しい表示の実端末での使いやすさ，フォント差とSSH接続時の評価，専用VMでの負荷比較は引き続き確認が必要．
+
+## Sysariumへの改称と全身・詳細の改訂
+
+- アプリ・バイナリをsysariumへ改称し，CLIテストとPTY検証も新しいコマンドを使う．内部Core／Linux crateと計算式は変更しない．
+- 顔と配色を維持し，胴体・両腕・両足を描く．両方の動作姿勢で左右反転した構造が一致することを検証する．
+- 80×24未満は案内へ切替．79×24・80×23・40×24・28×9・1×1・0×0を通り，80×24へ戻すと全身とメトリクスが復元される．縮小中も観測・終了操作を継続する．
+- 詳細はCPU・CPU pressure・Runnable・観測・計算と取得元の順とし，Rustの内部型や生JSONを表示しない．理由は日本語で説明し，長いI/O原因は省略を明示する．NDJSONの完全な原因は失わない．
+- 通常画面のavg10をpressure内へ移し，Runnableと分離．Tab操作は「表示切替」と明記する．
+
+テストによる構造の確認に加え，色付き合成画面で全身・余白・数値の配置を見直す．実際の利用者による改善後の評価と，端末フォント差・制限VMでの手動負荷比較は引き続き未実施．

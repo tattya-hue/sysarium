@@ -1,11 +1,11 @@
-# Inside — Product Vision v0.1
+# Sysarium — Product Vision v0.1
 
 更新日：2026-10-17
 状態：初期実装向けの暫定合意．実装結果に応じて更新する．
 
 ## 目的
 
-Linuxの内部で何が起きているかを，直感的な比喩表現から実測値，OSの仕組み，実験へとたどれるソフトウェアを作る．プロジェクト仮称は `Inside`（Living Computer × Inside OS）とする．
+Linuxの内部で何が起きているかを，直感的な比喩表現から実測値，OSの仕組み，実験へとたどれるソフトウェアを作る．製品名は `Sysarium` とする．systemと，状態を眺める小さな世界を結び付ける名前として，リポジトリ・実行コマンドにも揃える．
 
 **体験の連続性**：Feel（感じる）→ Observe（観測する）→ Understand（理解する）→ Experiment（実験する）．
 
@@ -29,7 +29,7 @@ MVPではFeel・Observe・Understandへの入口を検証する．Experimentは�
 - 言語：Rust．
 - 提供：独立実行できるCLIとTUI．SSH・ヘッドレス環境を考慮する．
 - 対象現象：CPU活動量とCPU競合．
-- 起動：`inside`／`inside live`でライブ監視．`inside --json`はNDJSONの継続出力．単発のスナップショットコマンドは提供しない．
+- 起動：`sysarium`／`sysarium live`でライブ監視．`sysarium --json`はNDJSONの継続出力．単発のスナップショットコマンドは提供しない．
 - TUI：Living，Metrics，Splitの3表示．
 - 推定と実測の分離，計測不能時の適切な表示，判断根拠の明示．
 

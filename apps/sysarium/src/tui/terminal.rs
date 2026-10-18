@@ -35,7 +35,7 @@ impl Drop for Restore {
 pub fn with_terminal(run: impl FnOnce(&mut LiveTerminal) -> io::Result<()>) -> io::Result<()> {
     if !io::stdin().is_terminal() || !io::stdout().is_terminal() {
         return Err(io::Error::other(
-            "inside live requires a terminal on stdin and stdout",
+            "sysarium live requires a terminal on stdin and stdout",
         ));
     }
     let mut restore = Restore { active: true };
@@ -59,7 +59,7 @@ mod tests {
 
     // 実PTYが必要．tests/verify_terminal.pyから個別に実行する．
     #[test]
-    #[ignore = "requires a PTY; run python3 apps/inside/tests/verify_terminal.py"]
+    #[ignore = "requires a PTY; run python3 apps/sysarium/tests/verify_terminal.py"]
     fn restores_after_error() {
         let error = with_terminal(|_| {
             assert!(crossterm::terminal::is_raw_mode_enabled()?);
@@ -71,7 +71,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires a PTY; run python3 apps/inside/tests/verify_terminal.py"]
+    #[ignore = "requires a PTY; run python3 apps/sysarium/tests/verify_terminal.py"]
     fn restores_after_panic() {
         let result = std::panic::catch_unwind(|| {
             let _ = with_terminal(|_| panic!("injected panic"));
