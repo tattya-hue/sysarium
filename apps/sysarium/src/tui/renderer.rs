@@ -17,6 +17,7 @@ const MINT: Color = Color::Rgb(126, 220, 185);
 const AMBER: Color = Color::Rgb(239, 190, 113);
 const FACE: Color = Color::Rgb(247, 229, 201);
 const CHEEK: Color = Color::Rgb(226, 145, 139);
+const SWEAT: Color = Color::Rgb(139, 211, 255);
 const LINE: Color = Color::Rgb(56, 72, 89);
 
 pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
@@ -176,15 +177,15 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     if area.is_empty() {
         return;
     }
-    // 完全な姿を置けない領域には描かず，切れた手足や縮小版を作らない．
-    if area.width < 39 || area.height < 18 {
+    // 完全な姿を置けない領域には描かず，欠けた描画や縮小版を作らない．
+    if area.width < 39 || area.height < 12 {
         return;
     }
     let stage = Rect::new(
         area.x + (area.width - 39) / 2,
-        area.y + (area.height - 18) / 2,
+        area.y + (area.height - 12) / 2,
         39,
-        18,
+        12,
     );
     let intensity = &app.scene.character.activity_intensity;
     let phase = match intensity {
@@ -196,17 +197,33 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     } else {
         "●    ●"
     };
+    let (case, screen, rim) = match intensity {
+        Ok(v) => (
+            Color::Rgb(
+                (32.0 + 26.0 * v) as u8,
+                (65.0 - 10.0 * v) as u8,
+                (63.0 - 30.0 * v) as u8,
+            ),
+            Color::Rgb(
+                (23.0 + 45.0 * v) as u8,
+                (43.0 + 8.0 * v) as u8,
+                (46.0 - 20.0 * v) as u8,
+            ),
+            Color::Rgb(
+                (126.0 + 113.0 * v) as u8,
+                (220.0 - 30.0 * v) as u8,
+                (185.0 - 72.0 * v) as u8,
+            ),
+        ),
+        Err(_) => (CARD, BG, MUTED),
+    };
     frame.render_widget(
-        Block::default().style(Style::default().bg(Color::Rgb(32, 65, 63))),
+        Block::default().style(Style::default().bg(case)),
         Rect::new(stage.x + 4, stage.y + 1, 16, 6),
     );
     frame.render_widget(
-        Block::default().style(Style::default().bg(Color::Rgb(23, 43, 46))),
+        Block::default().style(Style::default().bg(screen)),
         Rect::new(stage.x + 6, stage.y + 2, 12, 4),
-    );
-    frame.render_widget(
-        Block::default().style(Style::default().bg(CARD)),
-        Rect::new(stage.x + 3, stage.y + 14, 18, 2),
     );
     let head = [
         "   ╭────────────────╮".to_owned(),
@@ -219,40 +236,40 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         "   ╰────────────────╯".into(),
     ];
     for (y, line) in head.iter().enumerate() {
-        put(frame, stage, 0, y as u16, line, MINT);
+        put(frame, stage, 0, y as u16, line, rim);
     }
     put(frame, stage, 9, 3, eyes, FACE);
     put(frame, stage, 11, 4, "╰╯", FACE);
     put(frame, stage, 8, 4, "·", CHEEK);
     put(frame, stage, 15, 4, "·", CHEEK);
-    put(frame, stage, 10, 8, "│  │", MINT);
-    put(frame, stage, 7, 9, "╭──┴──┴──╮", MINT);
-    put(frame, stage, 7, 10, "╰────────╯", MINT);
-    put(frame, stage, 2, 13, "╭──────────────────╮", MINT);
-    put(frame, stage, 2, 14, "│                  │", MINT);
-    let keys = if intensity.is_err() {
-        "? ? ? ?  ? ? ? ?"
-    } else if phase {
-        "▪ ▫ ▪ ▫  ▫ ▪ ▫ ▪"
-    } else {
-        "▫ ▪ ▫ ▪  ▪ ▫ ▪ ▫"
-    };
-    for (i, key) in keys.chars().enumerate() {
-        let color = if key == '▪' && intensity.as_ref().is_ok_and(|v| *v > 0.0) {
-            FACE
+    put(frame, stage, 10, 8, "│  │", rim);
+    put(frame, stage, 7, 9, "╭──┴──┴──╮", rim);
+    put(frame, stage, 7, 10, "╰────────╯", rim);
+    // 汗はCPU活動だけを参照し，PSIや待機数には結び付けない．
+    if intensity.as_ref().is_ok_and(|v| *v >= 0.70) {
+        put(frame, stage, 9, 2, "╲", FACE);
+        put(frame, stage, 14, 2, "╱", FACE);
+        if phase {
+            for x in [0, 23] {
+                put(frame, stage, x, 3, "•", SWEAT);
+            }
+            for x in [1, 22] {
+                put(frame, stage, x, 4, "·", SWEAT);
+            }
         } else {
-            MUTED
-        };
-        put(frame, stage, 4 + i as u16, 14, &key.to_string(), color);
+            put(frame, stage, 1, 1, "╱", SWEAT);
+            put(frame, stage, 22, 1, "╲", SWEAT);
+            for x in [0, 23] {
+                put(frame, stage, x, 2, "•", SWEAT);
+            }
+        }
     }
-    put(frame, stage, 2, 15, "│    ──────────    │", MINT);
-    put(frame, stage, 2, 16, "╰──────────────────╯", MINT);
-    papers(frame, stage, 30, 16, &app.scene.task_stack.pressure_level);
+    papers(frame, stage, 30, 10, &app.scene.task_stack.pressure_level);
     put(
         frame,
         stage,
         0,
-        17,
+        11,
         "───────────────────────────────────────",
         LINE,
     );

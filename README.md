@@ -10,12 +10,16 @@ sysarium
 
 Requires Linux, Rust 1.88+, and a UTF-8 terminal of at least **80 × 24**. SSH with a PTY works too. `sysarium live` opens the same monitor.
 
+**Relaxed** · CPU **8%** · wait **0.1%**
+
+![Relaxed computer — synthetic data](docs/assets/relaxed.png)
+
 | Busy · little waiting | Busy · CPU contention |
 |---|---|
 | ![CPU 93%, wait 0.2%](docs/assets/busy-low-wait.gif) | ![CPU 92%, wait 28%](docs/assets/busy-high-wait.gif) |
 | CPU **93%** · wait **0.2%** | CPU **92%** · wait **28%** |
 
-Synthetic fixtures, not a load test. **Keys pulse with CPU usage; papers reflect CPU wait.** [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
+Synthetic fixtures, not a load test. **Mint = relaxed. Warm screen + sweat = busy. Papers reflect CPU wait.** [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
 
 | Control | Action |
 |---|---|

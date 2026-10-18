@@ -33,14 +33,22 @@ def main():
     args = parser.parse_args()
     font = ImageFont.truetype(args.font, 16)
     args.output.mkdir(parents=True, exist_ok=True)
-    for case, name in [("a", "busy-low-wait"), ("b", "busy-high-wait")]:
+    for case, name in [("a", "busy-low-wait"), ("b", "busy-high-wait"), ("c", "relaxed")]:
         frames = [render(path, font) for path in sorted((args.frames / case).glob("*.svg"))]
         if not frames:
             parser.error(f"no exported frames for case {case}")
-        frames[0].save(args.output / f"{name}.gif", save_all=True,
-                       append_images=frames[1:], duration=100, loop=0, disposal=2)
         frames[0].save(args.output / f"{name}.png")
-        print(f"{name}: {len(frames)} frames, 100 ms/frame, synthetic fixture")
+        if name == "relaxed":
+            print(f"{name}: static synthetic fixture")
+        else:
+            # One palette keeps unchanged UI colours stable across GIF frames.
+            palette = frames[0].quantize(colors=256)
+            indexed = [frame.quantize(palette=palette, dither=Image.Dither.NONE) for frame in frames]
+            indexed[0].save(args.output / f"{name}.gif", save_all=True,
+                            append_images=indexed[1:], duration=100, loop=0,
+                            disposal=2, optimize=False)
+            print(f"{name}: {len(frames)} frames, 100 ms/frame, synthetic fixture")
+
 
 
 if __name__ == "__main__":

@@ -47,3 +47,7 @@ python3 scripts/render_previews.py target/readme-previews docs/assets
 ```
 
 `--font`でフォントパスを指定できる．中間SVGはGit対象外のtargetへ置き，GIFとPNGだけをREADMEで使う．合成画像は実測の負荷実験結果として扱わない．
+
+## PC本体の忙しさと落ち着いた表示
+
+現行のREADMEプレビューはPC本体の色・表情・汗でCPU usageを示す．キーボードは撤去した．既存のA/BにC（CPU8%・wait0.1%）を加え，同じ手順でrelaxed.pngも生成する．Cは汗が出ず静止するため，PNGだけを保存する．最新GIFのフレーム差分はPC周囲の汗だけで，数値・書類は固定．これ以前のキーだけが点滅する記録は旧表示を指す．

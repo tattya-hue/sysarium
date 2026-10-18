@@ -17,7 +17,7 @@
 │10s trend  Recent CPU wait, smoothed over ~10s.                               │
 │Runnable   Running + ready to run; not a waiting count.                       │
 │                                                                              │
-│Keyboard   Faster key pulses = higher CPU usage.                              │
+│Screen color and sweat reflect CPU usage.                                     │
 │Papers reflect CPU wait; not a task count.                                    │
 │N/A or ? = unknown. First reading needs ~1s.                                  │
 │Charts: past → now, 0–100%, up to 120 readings.                               │

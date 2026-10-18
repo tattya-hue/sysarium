@@ -98,7 +98,7 @@ fn p3_export_review_snapshots() {
         }
     }
     if let Some(frames_root) = std::env::var_os("SYSARIUM_PREVIEW_FRAMES") {
-        for case in ["a", "b"] {
+        for case in ["a", "b", "c"] {
             let app = p3_app(case);
             let frames = std::path::PathBuf::from(&frames_root).join(case);
             std::fs::create_dir_all(&frames).unwrap();
@@ -490,12 +490,14 @@ fn export_svg(app: &App, width: u16, height: u16, elapsed: Duration, path: &std:
 }
 
 #[test]
-fn face_monitor_stand_and_keyboard_are_symmetric_in_both_work_frames() {
+fn face_monitor_stand_and_sweat_are_symmetric_in_both_work_frames() {
     let reflect = |c| match c {
         '╭' => '╮',
         '╮' => '╭',
         '╰' => '╯',
         '╯' => '╰',
+        '╱' => '╲',
+        '╲' => '╱',
         '├' => '┤',
         '┤' => '├',
         c => c,
@@ -508,7 +510,7 @@ fn face_monitor_stand_and_keyboard_are_symmetric_in_both_work_frames() {
             .position(|line| line.contains("╭────────────────╮"))
             .unwrap();
         let x = lines[top].chars().position(|c| c == '╭').unwrap() - 3;
-        for line in &lines[top..=top + 16] {
+        for line in &lines[top..=top + 10] {
             let body: Vec<_> = line.chars().skip(x).take(24).collect();
             let mirrored: Vec<_> = body.iter().rev().copied().map(reflect).collect();
             assert_eq!(body, mirrored, "unbalanced computer: {line}");
@@ -538,11 +540,11 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
         let out = text(&terminal);
         if width >= 80 && height >= 24 {
             assert!(out.contains("╰╯"));
-            assert!(out.contains("╰──────────────────╯"));
+            assert!(out.contains("╰────────╯"));
             assert!(out.contains("Tab view"));
         } else {
             assert!(!out.contains("╰╯"));
-            assert!(!out.contains("╰──────────────────╯"));
+            assert!(!out.contains("╰────────╯"));
             if width >= 40 && height >= 10 {
                 assert!(out.contains("80 x 24"));
                 assert!(out.contains("92.0%"));
@@ -579,5 +581,47 @@ fn all_views_overlays_and_unavailable_states_use_english_copy() {
             no_cjk(&app.overlay.as_ref().unwrap().text);
             no_cjk(&render(&app, 80, 24));
         }
+    }
+}
+
+#[test]
+fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
+    let pc = |app: &App| {
+        let mut terminal = Terminal::new(TestBackend::new(80, 24)).unwrap();
+        terminal
+            .draw(|frame| renderer::draw(frame, app, Duration::ZERO))
+            .unwrap();
+        let out = text(&terminal);
+        let lines: Vec<_> = out.lines().collect();
+        let top = lines
+            .iter()
+            .position(|line| line.contains("╭────────────────╮"))
+            .unwrap();
+        let left = lines[top].chars().position(|c| c == '╭').unwrap() - 3;
+        let buffer = terminal.backend().buffer();
+        let mut cells = Vec::new();
+        for y in top..top + 11 {
+            for x in left..left + 24 {
+                cells.push(buffer[(x as u16, y as u16)].clone());
+            }
+        }
+        cells
+    };
+    let relaxed = p3_app("c");
+    assert!(!render(&relaxed, 80, 24).contains('•'));
+    let mut busy = p3_app("a");
+    busy.scene.character.activity_intensity = Ok(0.9);
+    assert!(render(&busy, 80, 24).contains('•'));
+    assert_ne!(pc(&relaxed), pc(&busy)); // Includes screen and case colours.
+    for case in ["b", "d"] {
+        let mut other = p3_app(case);
+        other.scene.character.activity_intensity = Ok(0.9);
+        assert_eq!(pc(&busy), pc(&other)); // Waiting/PSI missing must not drive sweating.
+    }
+    busy.scene.character.activity_intensity = Err(Reason::NotFound);
+    assert!(!render(&busy, 80, 24).contains('•'));
+    assert_ne!(pc(&relaxed), pc(&busy)); // Unknown must not look idle.
+    for app in [&relaxed, &busy] {
+        assert!(!render(app, 80, 24).contains('▪'));
     }
 }
