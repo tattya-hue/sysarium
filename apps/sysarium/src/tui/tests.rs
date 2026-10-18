@@ -69,7 +69,7 @@ fn p3_export_review_snapshots() {
         .expect("set INSIDE_REVIEW_SNAPSHOTS to the export directory");
     let root = std::path::PathBuf::from(root);
     std::fs::create_dir_all(&root).unwrap();
-    for case in ["a", "b", "c", "d"] {
+    for case in ["a", "b", "c", "d", "e"] {
         let mut app = p3_app(case);
         app.mode = ViewMode::Both;
         for (width, height) in [(140, 34), (100, 24), (80, 24), (40, 24)] {
@@ -98,7 +98,7 @@ fn p3_export_review_snapshots() {
         }
     }
     if let Some(frames_root) = std::env::var_os("SYSARIUM_PREVIEW_FRAMES") {
-        for case in ["a", "b", "c"] {
+        for case in ["a", "b", "c", "e"] {
             let app = p3_app(case);
             let frames = std::path::PathBuf::from(&frames_root).join(case);
             std::fs::create_dir_all(&frames).unwrap();
@@ -511,10 +511,17 @@ fn face_monitor_and_stand_stay_symmetric_while_sweat_moves() {
         '╲' => '╱',
         '├' => '┤',
         '┤' => '├',
+        '>' => '<',
+        '<' => '>',
         c => c,
     };
-    for elapsed in [Duration::ZERO, Duration::from_millis(300)] {
-        let out = render_at(&app(), 80, 24, elapsed);
+    for (case, elapsed) in [
+        ("c", Duration::ZERO),
+        ("a", Duration::ZERO),
+        ("e", Duration::ZERO),
+        ("e", Duration::from_millis(300)),
+    ] {
+        let out = render_at(&p3_app(case), 80, 24, elapsed);
         let lines: Vec<_> = out.lines().collect();
         let top = lines
             .iter()
@@ -531,6 +538,45 @@ fn face_monitor_and_stand_stay_symmetric_while_sweat_moves() {
 }
 
 #[test]
+fn three_character_levels_have_distinct_faces_and_colours_at_supported_sizes() {
+    use ratatui::style::Color;
+    let mut rims = Vec::new();
+    for (case, mouth, eyes) in [
+        ("c", "·  ╰╯  ·", "●    ●"),
+        ("a", "·  ╭╮  ·", "●    ●"),
+        ("e", "·  ~~  ·", ">    <"),
+    ] {
+        for (width, height) in [(80, 24), (100, 24), (140, 34)] {
+            let mut app = p3_app(case);
+            for mode in [ViewMode::Animation, ViewMode::Both] {
+                app.mode = mode;
+                let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
+                terminal
+                    .draw(|frame| renderer::draw(frame, &app, Duration::ZERO))
+                    .unwrap();
+                let out = text(&terminal);
+                assert!(out.contains(mouth) && out.contains(eyes));
+                let (y, line) = out
+                    .lines()
+                    .enumerate()
+                    .find(|(_, line)| line.contains("╭────────────────╮"))
+                    .unwrap();
+                let x = line.chars().position(|c| c == '╭').unwrap();
+                let colour = terminal.backend().buffer()[(x as u16, y as u16)].fg;
+                if width == 80 && mode == ViewMode::Both {
+                    rims.push(colour);
+                }
+                if case == "e" {
+                    assert!(matches!(colour, Color::Rgb(r, g, b) if r > g && r > b));
+                    assert!(out.contains("99.0%"));
+                }
+            }
+        }
+    }
+    assert!(rims[0] != rims[1] && rims[1] != rims[2] && rims[0] != rims[2]);
+}
+
+#[test]
 fn sweat_splashes_outward_one_side_at_a_time_with_pauses() {
     let mut app = p3_app("a");
     app.scene.character.activity_intensity = Ok(1.0);
@@ -544,7 +590,7 @@ fn sweat_splashes_outward_one_side_at_a_time_with_pauses() {
         for y in 0..24 {
             for x in 0..80 {
                 let cell = &buffer[(x, y)];
-                if matches!(cell.symbol(), "◢" | "◣") {
+                if matches!(cell.symbol(), "•") {
                     drops.push((x, y, cell.symbol().to_owned(), cell.fg));
                 }
             }
@@ -556,25 +602,32 @@ fn sweat_splashes_outward_one_side_at_a_time_with_pauses() {
     let left_fading = drops(&app, Duration::from_millis(200));
     let right = drops(&app, Duration::from_millis(1200));
     let right_outward = drops(&app, Duration::from_millis(1300));
-    assert_eq!(left.len(), 1);
-    assert_eq!(left_outward.len(), 1);
-    assert_eq!(left_fading.len(), 1);
-    assert_eq!(right.len(), 1);
-    assert_eq!(right_outward.len(), 1);
-    assert!(left_outward[0].0 < left[0].0 && left_outward[0].1 < left[0].1);
-    assert!(right_outward[0].0 > right[0].0 && right_outward[0].1 < right[0].1);
+    let out = render(&app, 80, 24);
+    let head_y = out
+        .lines()
+        .position(|line| line.contains("╭────────────────╮"))
+        .unwrap() as u16;
+    assert!(left.iter().chain(&right).all(|drop| drop.1 < head_y));
+    assert!(!out.contains('◢') && !out.contains('◣'));
+    assert_eq!(left.len(), 2);
+    assert_eq!(left_outward.len(), 2);
+    assert_eq!(left_fading.len(), 2);
+    assert_eq!(right.len(), 2);
+    assert_eq!(right_outward.len(), 2);
+    assert!(left_outward[1].0 < left[1].0 && left_outward[1].1 < left[1].1);
+    assert!(right_outward[1].0 > right[1].0 && right_outward[1].1 < right[1].1);
     assert_eq!(left[0].2, left_outward[0].2);
     assert_eq!(left[0].2, left_fading[0].2); // Keep the droplet shape through the fade.
     assert_ne!(left[0].3, left_fading[0].3);
     assert!(drops(&app, Duration::from_millis(300)).is_empty());
     assert!(drops(&app, Duration::from_millis(1500)).is_empty());
     for step in 0..24 {
-        assert!(drops(&app, Duration::from_millis(step * 100)).len() <= 1);
+        assert!(drops(&app, Duration::from_millis(step * 100)).len() <= 2);
     }
     // Usage updates may change colours, but must not jump the sweat's clock phase.
     let elapsed = Duration::from_millis(240_100);
     let before = drops(&app, elapsed);
-    assert_eq!(before.len(), 1);
+    assert_eq!(before.len(), 2);
     app.scene.character.activity_intensity = Ok(0.75);
     assert_eq!(before, drops(&app, elapsed));
 }
@@ -669,11 +722,11 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         cells
     };
     let relaxed = p3_app("c");
-    assert!(!render(&relaxed, 80, 24).contains('◢'));
+    assert!(!render(&relaxed, 80, 24).contains('•'));
     assert!(render(&relaxed, 80, 24).contains("·  ╰╯  ·"));
     let mut busy = p3_app("a");
     busy.scene.character.activity_intensity = Ok(0.9);
-    assert!(render(&busy, 80, 24).contains('◢'));
+    assert!(render(&busy, 80, 24).contains('•'));
     assert!(render(&busy, 80, 24).contains("·  ╭╮  ·"));
     assert!(!render(&busy, 80, 24).contains("·  ╰╯  ·"));
     assert_ne!(pc(&relaxed), pc(&busy)); // Includes screen and case colours.
@@ -683,7 +736,7 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         assert_eq!(pc(&busy), pc(&other)); // Waiting/PSI missing must not drive sweating.
     }
     busy.scene.character.activity_intensity = Err(Reason::NotFound);
-    assert!(!render(&busy, 80, 24).contains('◢'));
+    assert!(!render(&busy, 80, 24).contains('•'));
     assert_ne!(pc(&relaxed), pc(&busy)); // Unknown must not look idle.
     for app in [&relaxed, &busy] {
         assert!(!render(app, 80, 24).contains('▪'));

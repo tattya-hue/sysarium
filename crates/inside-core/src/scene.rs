@@ -5,10 +5,34 @@ use crate::{analysis::Analysis, observation::UnavailableReason as Reason};
 /// 運用上の正常・異常の判定基準や待機タスク数ではない．
 pub const PRESSURE_THRESHOLDS: [f64; 5] = [0.005, 0.02, 0.05, 0.10, 0.25];
 pub const ACTIVITY_SMOOTHING_ALPHA: f64 = 0.5;
+/// キャラクター表現の暫定境界．遅延・温度・正常異常の判定ではない．
+pub const ACTIVITY_THRESHOLDS: [f64; 2] = [0.70, 0.95];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ActivityLevel {
+    Relaxed,
+    Busy,
+    Strained,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Character {
     pub activity_intensity: Result<f64, Reason>,
+}
+
+impl Character {
+    /// 平滑化済みの活動強度だけから導出する．PSI・書類の段階は参照しない．
+    pub fn activity_level(&self) -> Result<ActivityLevel, Reason> {
+        ratio(&self.activity_intensity, "activity_intensity").map(|value| {
+            if value >= ACTIVITY_THRESHOLDS[1] {
+                ActivityLevel::Strained
+            } else if value >= ACTIVITY_THRESHOLDS[0] {
+                ActivityLevel::Busy
+            } else {
+                ActivityLevel::Relaxed
+            }
+        })
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -105,6 +129,70 @@ mod tests {
         analysis.cpu_active_ratio = activity;
         analysis.cpu_psi_some_interval_ratio = pressure;
         analysis
+    }
+
+    #[test]
+    fn character_levels_have_explicit_boundaries_and_preserve_unknown() {
+        for (value, expected) in [
+            (0.0, ActivityLevel::Relaxed),
+            (ACTIVITY_THRESHOLDS[0].next_down(), ActivityLevel::Relaxed),
+            (ACTIVITY_THRESHOLDS[0], ActivityLevel::Busy),
+            (ACTIVITY_THRESHOLDS[1].next_down(), ActivityLevel::Busy),
+            (ACTIVITY_THRESHOLDS[1], ActivityLevel::Strained),
+            (1.0, ActivityLevel::Strained),
+        ] {
+            assert_eq!(
+                Character {
+                    activity_intensity: Ok(value)
+                }
+                .activity_level(),
+                Ok(expected)
+            );
+        }
+        for value in [f64::NAN, f64::INFINITY, -0.01, 1.01] {
+            assert!(
+                Character {
+                    activity_intensity: Ok(value)
+                }
+                .activity_level()
+                .is_err()
+            );
+        }
+        assert_eq!(
+            Character {
+                activity_intensity: Err(Reason::FirstSample)
+            }
+            .activity_level(),
+            Err(Reason::FirstSample)
+        );
+    }
+
+    #[test]
+    fn character_levels_follow_smoothing_and_ignore_contention() {
+        let mut scene = Scene::from_analysis(&analysis(Ok(0.0), Ok(0.0), 1), None);
+        for (id, expected) in [
+            ActivityLevel::Relaxed,
+            ActivityLevel::Busy,
+            ActivityLevel::Busy,
+            ActivityLevel::Busy,
+            ActivityLevel::Strained,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            scene = Scene::from_analysis(
+                &analysis(Ok(1.0), Err(Reason::NotFound), id as u64 + 2),
+                Some(&scene),
+            );
+            assert_eq!(scene.character.activity_level(), Ok(expected));
+        }
+        for pressure in [Ok(0.0), Ok(1.0), Err(Reason::NotFound)] {
+            let scene = Scene::from_analysis(&analysis(Ok(0.99), pressure, 10), None);
+            assert_eq!(
+                scene.character.activity_level(),
+                Ok(ActivityLevel::Strained)
+            );
+        }
     }
 
     #[test]

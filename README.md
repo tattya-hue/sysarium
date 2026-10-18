@@ -19,7 +19,11 @@ Requires Linux, Rust 1.88+, and a UTF-8 terminal of at least **80 × 24**. SSH w
 | ![CPU 93%, wait 0.2%](docs/assets/busy-low-wait.gif) | ![CPU 92%, wait 28%](docs/assets/busy-high-wait.gif) |
 | CPU **93%** · wait **0.2%** | CPU **92%** · wait **28%** |
 
-Synthetic fixtures, not a load test. **Mint = relaxed. Warm screen + sweat = busy. Papers reflect CPU wait.** [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
+**Strained** · CPU **99%** · wait **28%**
+
+![Strained computer — synthetic data](docs/assets/strained.gif)
+
+Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = strained.** Character state follows smoothed CPU usage; it does not measure latency. Papers reflect CPU wait. [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
 
 | Control | Action |
 |---|---|

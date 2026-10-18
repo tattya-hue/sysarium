@@ -17,8 +17,8 @@
 │10s trend  Recent CPU wait, smoothed over ~10s.                               │
 │Runnable   Running + ready to run; not a waiting count.                       │
 │                                                                              │
-│Screen color and sweat reflect CPU usage.                                     │
+│Character: green relaxed / amber busy / red strained.                         │
+│Color follows smoothed CPU usage, not measured latency.                       │
 │Papers reflect CPU wait; not a task count.                                    │
 │N/A or ? = unknown. First reading needs ~1s.                                  │
-│Charts: past → now, 0–100%, up to 120 readings.                               │
 └ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘

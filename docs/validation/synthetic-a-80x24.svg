@@ -3,26 +3,26 @@
 <rect x="490" y="80" width="290" height="20" fill="#1a2231"/>
 <rect x="490" y="100" width="290" height="20" fill="#1a2231"/>
 <rect x="490" y="120" width="290" height="20" fill="#1a2231"/>
-<rect x="80" y="140" width="160" height="20" fill="#383723"/>
 <rect x="490" y="140" width="290" height="20" fill="#1a2231"/>
-<rect x="80" y="160" width="20" height="20" fill="#383723"/>
-<rect x="100" y="160" width="120" height="20" fill="#40321b"/>
-<rect x="220" y="160" width="20" height="20" fill="#383723"/>
 <rect x="490" y="160" width="290" height="20" fill="#1a2231"/>
-<rect x="80" y="180" width="20" height="20" fill="#383723"/>
-<rect x="100" y="180" width="120" height="20" fill="#40321b"/>
-<rect x="220" y="180" width="20" height="20" fill="#383723"/>
+<rect x="80" y="180" width="160" height="20" fill="#3a3721"/>
 <rect x="490" y="180" width="290" height="20" fill="#1a2231"/>
-<rect x="80" y="200" width="20" height="20" fill="#383723"/>
-<rect x="100" y="200" width="120" height="20" fill="#40321b"/>
-<rect x="220" y="200" width="20" height="20" fill="#383723"/>
+<rect x="80" y="200" width="20" height="20" fill="#3a3721"/>
+<rect x="100" y="200" width="120" height="20" fill="#44331a"/>
+<rect x="220" y="200" width="20" height="20" fill="#3a3721"/>
 <rect x="490" y="200" width="290" height="20" fill="#1a2231"/>
-<rect x="80" y="220" width="20" height="20" fill="#383723"/>
-<rect x="100" y="220" width="120" height="20" fill="#40321b"/>
-<rect x="220" y="220" width="20" height="20" fill="#383723"/>
-<rect x="80" y="240" width="160" height="20" fill="#383723"/>
+<rect x="80" y="220" width="20" height="20" fill="#3a3721"/>
+<rect x="100" y="220" width="120" height="20" fill="#44331a"/>
+<rect x="220" y="220" width="20" height="20" fill="#3a3721"/>
+<rect x="80" y="240" width="20" height="20" fill="#3a3721"/>
+<rect x="100" y="240" width="120" height="20" fill="#44331a"/>
+<rect x="220" y="240" width="20" height="20" fill="#3a3721"/>
 <rect x="490" y="240" width="290" height="20" fill="#1a2231"/>
+<rect x="80" y="260" width="20" height="20" fill="#3a3721"/>
+<rect x="100" y="260" width="120" height="20" fill="#44331a"/>
+<rect x="220" y="260" width="20" height="20" fill="#3a3721"/>
 <rect x="490" y="260" width="290" height="20" fill="#1a2231"/>
+<rect x="80" y="280" width="160" height="20" fill="#3a3721"/>
 <rect x="490" y="280" width="290" height="20" fill="#1a2231"/>
 <rect x="490" y="300" width="290" height="20" fill="#1a2231"/>
 <rect x="490" y="320" width="290" height="20" fill="#1a2231"/>
@@ -87,66 +87,53 @@
 <text x="550" y="96" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">n</text>
 <text x="560" y="96" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">g</text>
 <text x="760" y="116" fill="#7edcb9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">▅</text>
-<text x="70" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
-<text x="80" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="90" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="100" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="110" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="120" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="210" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="220" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="230" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="240" y="136" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
+<text x="80" y="136" fill="#8bd3ff" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">•</text>
 <text x="760" y="136" fill="#7edcb9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">█</text>
-<text x="70" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
-<text x="100" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="110" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="120" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="210" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="220" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
-<text x="240" y="156" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="60" y="156" fill="#8bd3ff" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">•</text>
 <text x="760" y="156" fill="#7edcb9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">█</text>
-<text x="60" y="176" fill="#8bd3ff" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">◢</text>
-<text x="70" y="176" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="176" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="130" y="176" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╲</text>
-<text x="180" y="176" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╱</text>
-<text x="220" y="176" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="240" y="176" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
+<text x="80" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="90" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="100" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="110" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="120" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="210" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="220" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="230" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="240" y="176" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
 <text x="760" y="176" fill="#7edcb9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">█</text>
-<text x="70" y="196" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="196" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="130" y="196" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">●</text>
-<text x="180" y="196" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">●</text>
-<text x="220" y="196" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="240" y="196" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
+<text x="100" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="110" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="120" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="210" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="220" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
+<text x="240" y="196" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
 <text x="750" y="196" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">?</text>
 <text x="760" y="196" fill="#7edcb9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">█</text>
-<text x="70" y="216" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="216" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="120" y="216" fill="#e2918b" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">·</text>
-<text x="150" y="216" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
-<text x="160" y="216" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
-<text x="190" y="216" fill="#e2918b" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">·</text>
-<text x="220" y="216" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="240" y="216" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="216" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="216" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="130" y="216" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╲</text>
+<text x="180" y="216" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╱</text>
+<text x="220" y="216" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="240" y="216" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
 <text x="490" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="500" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="510" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
@@ -176,26 +163,20 @@
 <text x="750" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="760" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="770" y="216" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="70" y="236" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="236" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="220" y="236" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="240" y="236" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="70" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="90" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
-<text x="100" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="110" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="120" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="210" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="220" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
-<text x="240" y="256" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="236" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="236" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="130" y="236" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">●</text>
+<text x="180" y="236" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">●</text>
+<text x="220" y="236" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="240" y="236" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="120" y="256" fill="#e2918b" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">·</text>
+<text x="150" y="256" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
+<text x="160" y="256" fill="#f7e5c9" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
+<text x="190" y="256" fill="#e2918b" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">·</text>
+<text x="220" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="240" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
 <text x="500" y="256" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">C</text>
 <text x="510" y="256" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">P</text>
 <text x="520" y="256" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">U</text>
@@ -207,24 +188,10 @@
 <text x="610" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">.</text>
 <text x="620" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">2</text>
 <text x="630" y="256" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">%</text>
-<text x="70" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
-<text x="80" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="90" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="100" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="110" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="120" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="210" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="220" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="230" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="240" y="276" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
+<text x="70" y="276" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="276" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="220" y="276" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="240" y="276" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
 <text x="500" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">W</text>
 <text x="510" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">a</text>
 <text x="520" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">i</text>
@@ -238,8 +205,22 @@
 <text x="620" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">C</text>
 <text x="630" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">P</text>
 <text x="640" y="276" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">U</text>
-<text x="140" y="296" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
-<text x="170" y="296" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="70" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="90" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
+<text x="100" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="110" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="120" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="210" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="220" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
+<text x="240" y="296" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
 <text x="500" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">1</text>
 <text x="510" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">0</text>
 <text x="520" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">s</text>
@@ -252,67 +233,87 @@
 <text x="610" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">.</text>
 <text x="620" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">2</text>
 <text x="630" y="296" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">%</text>
-<text x="110" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
-<text x="120" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">┴</text>
-<text x="150" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">┴</text>
-<text x="180" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="316" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
-<text x="110" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
-<text x="120" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="336" fill="#e7c076" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
-<text x="40" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="50" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="60" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="70" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="80" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="90" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="100" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="110" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="120" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="130" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="140" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="150" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="160" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="170" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="180" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="190" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="200" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="210" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="220" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="230" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="240" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="250" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="260" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="270" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="280" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="290" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="300" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="310" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="320" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="330" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="340" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="350" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="360" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="370" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="380" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="390" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="400" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="410" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
-<text x="420" y="356" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="70" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
+<text x="80" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="90" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="100" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="110" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="120" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="210" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="220" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="230" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="240" y="316" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
+<text x="140" y="336" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="170" y="336" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">│</text>
+<text x="110" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╭</text>
+<text x="120" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">┴</text>
+<text x="150" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">┴</text>
+<text x="180" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="356" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╮</text>
+<text x="110" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╰</text>
+<text x="120" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">╯</text>
 <text x="750" y="376" fill="#8c9cb1" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">?</text>
 <text x="760" y="376" fill="#efbe71" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">▁</text>
+<text x="40" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="50" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="60" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="70" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="80" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="90" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="100" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="110" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="120" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="130" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="140" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="150" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="160" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="170" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="180" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="190" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="200" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="210" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="220" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="230" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="240" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="250" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="260" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="270" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="280" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="290" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="300" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="310" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="320" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="330" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="340" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="350" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="360" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="370" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="380" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="390" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="400" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="410" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
+<text x="420" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="490" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="500" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>
 <text x="510" y="396" fill="#384859" font-family="DejaVu Sans Mono,DejaVu Sans,Noto Sans CJK JP,monospace" font-size="16">─</text>

@@ -33,7 +33,7 @@ def main():
     args = parser.parse_args()
     font = ImageFont.truetype(args.font, 16)
     args.output.mkdir(parents=True, exist_ok=True)
-    for case, name in [("a", "busy-low-wait"), ("b", "busy-high-wait"), ("c", "relaxed")]:
+    for case, name in [("a", "busy-low-wait"), ("b", "busy-high-wait"), ("c", "relaxed"), ("e", "strained")]:
         frames = [render(path, font) for path in sorted((args.frames / case).glob("*.svg"))]
         if not frames:
             parser.error(f"no exported frames for case {case}")

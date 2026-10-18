@@ -1,5 +1,5 @@
 use super::app::{App, ViewMode};
-use inside_core::observation::UnavailableReason as Reason;
+use inside_core::{observation::UnavailableReason as Reason, scene::ActivityLevel};
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Layout, Margin, Rect},
@@ -179,50 +179,45 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         return;
     }
     // 完全な姿を置けない領域には描かず，欠けた描画や縮小版を作らない．
-    if area.width < 39 || area.height < 12 {
+    if area.width < 39 || area.height < 15 {
         return;
     }
     let stage = Rect::new(
         area.x + (area.width - 39) / 2,
-        area.y + (area.height - 12) / 2,
+        area.y + (area.height - 15) / 2,
         39,
-        12,
+        15,
     );
-    let intensity = &app.scene.character.activity_intensity;
-    let busy = intensity.as_ref().is_ok_and(|v| *v >= 0.70);
-    let mouth = if busy { "╭╮" } else { "╰╯" };
-    let eyes = if intensity.is_err() {
-        "?    ?"
-    } else {
-        "●    ●"
+    let pc = Rect::new(stage.x, stage.y + 3, 24, 11);
+    let level = app.scene.character.activity_level();
+    let busy = matches!(level, Ok(ActivityLevel::Busy | ActivityLevel::Strained));
+    let mouth = match level {
+        Ok(ActivityLevel::Relaxed) | Err(_) => "╰╯",
+        Ok(ActivityLevel::Busy) => "╭╮",
+        Ok(ActivityLevel::Strained) => "~~",
     };
-    let (case, screen, rim) = match intensity {
-        Ok(v) => (
-            Color::Rgb(
-                (32.0 + 26.0 * v) as u8,
-                (65.0 - 10.0 * v) as u8,
-                (63.0 - 30.0 * v) as u8,
-            ),
-            Color::Rgb(
-                (23.0 + 45.0 * v) as u8,
-                (43.0 + 8.0 * v) as u8,
-                (46.0 - 20.0 * v) as u8,
-            ),
-            Color::Rgb(
-                (126.0 + 113.0 * v) as u8,
-                (220.0 - 30.0 * v) as u8,
-                (185.0 - 72.0 * v) as u8,
-            ),
+    let eyes = match level {
+        Err(_) => "?    ?",
+        Ok(ActivityLevel::Strained) => ">    <",
+        _ => "●    ●",
+    };
+    let (case, screen, rim) = match level {
+        Ok(ActivityLevel::Relaxed) => (Color::Rgb(32, 65, 63), Color::Rgb(23, 43, 46), MINT),
+        Ok(ActivityLevel::Busy) => (Color::Rgb(58, 55, 33), Color::Rgb(68, 51, 26), AMBER),
+        Ok(ActivityLevel::Strained) => (
+            Color::Rgb(83, 39, 47),
+            Color::Rgb(58, 28, 39),
+            Color::Rgb(246, 123, 132),
         ),
         Err(_) => (CARD, BG, MUTED),
     };
     frame.render_widget(
         Block::default().style(Style::default().bg(case)),
-        Rect::new(stage.x + 4, stage.y + 1, 16, 6),
+        Rect::new(pc.x + 4, pc.y + 1, 16, 6),
     );
     frame.render_widget(
         Block::default().style(Style::default().bg(screen)),
-        Rect::new(stage.x + 6, stage.y + 2, 12, 4),
+        Rect::new(pc.x + 6, pc.y + 2, 12, 4),
     );
     let head = [
         "   ╭────────────────╮".to_owned(),
@@ -235,46 +230,47 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         "   ╰────────────────╯".into(),
     ];
     for (y, line) in head.iter().enumerate() {
-        put(frame, stage, 0, y as u16, line, rim);
+        put(frame, pc, 0, y as u16, line, rim);
     }
-    put(frame, stage, 9, 3, eyes, FACE);
-    put(frame, stage, 11, 4, mouth, FACE);
-    put(frame, stage, 8, 4, "·", CHEEK);
-    put(frame, stage, 15, 4, "·", CHEEK);
-    put(frame, stage, 10, 8, "│  │", rim);
-    put(frame, stage, 7, 9, "╭──┴──┴──╮", rim);
-    put(frame, stage, 7, 10, "╰────────╯", rim);
+    put(frame, pc, 9, 3, eyes, FACE);
+    put(frame, pc, 11, 4, mouth, FACE);
+    put(frame, pc, 8, 4, "·", CHEEK);
+    put(frame, pc, 15, 4, "·", CHEEK);
+    put(frame, pc, 10, 8, "│  │", rim);
+    put(frame, pc, 7, 9, "╭──┴──┴──╮", rim);
+    put(frame, pc, 7, 10, "╰────────╯", rim);
     // 汗はCPU活動だけを参照し，PSIや待機数には結び付けない．
     if busy {
-        put(frame, stage, 9, 2, "╲", FACE);
-        put(frame, stage, 14, 2, "╱", FACE);
-        // 先の細い粒を短く外へ飛ばし，同じ形のまま色を薄くする．
-        // 一度に1セル，300msの動作の後は900ms休む．
-        // 使用率の更新で位相が飛ばないよう，時計だけで時刻を決める．
+        put(frame, pc, 9, 2, "╲", FACE);
+        put(frame, pc, 14, 2, "╱", FACE);
+        // 頭の斜め上へ丸い2粒を短く飛ばす．線・三角・軌跡は付けない．
+        // 使用率の更新で位相が飛ばないよう，時計だけで周期を決める．
         let tick = elapsed.as_millis() / 100;
         let splash = match tick % 24 {
-            0 => Some((2, 2, "◢", SWEAT)),
-            1 => Some((1, 1, "◢", SWEAT)),
-            2 => Some((0, 1, "◢", SWEAT_FADED)),
-            12 => Some((21, 3, "◣", SWEAT)),
-            13 => Some((22, 2, "◣", SWEAT)),
-            14 => Some((23, 2, "◣", SWEAT_FADED)),
+            0 => Some(([(2, 2), (4, 1)], SWEAT)),
+            1 => Some(([(1, 1), (3, 0)], SWEAT)),
+            2 => Some(([(0, 1), (2, 0)], SWEAT_FADED)),
+            12 => Some(([(21, 2), (19, 1)], SWEAT)),
+            13 => Some(([(22, 1), (20, 0)], SWEAT)),
+            14 => Some(([(23, 1), (21, 0)], SWEAT_FADED)),
             _ => None,
         };
-        if let Some((x, y, glyph, color)) = splash {
-            put(frame, stage, x, y, glyph, color);
+        if let Some((drops, color)) = splash {
+            for (x, y) in drops {
+                put(frame, stage, x, y, "•", color);
+            }
         }
     }
-    papers(frame, stage, 30, 10, &app.scene.task_stack.pressure_level);
+    papers(frame, stage, 30, 13, &app.scene.task_stack.pressure_level);
     put(
         frame,
         stage,
         0,
-        11,
+        14,
         "───────────────────────────────────────",
         LINE,
     );
-    if intensity.is_err() {
+    if level.is_err() {
         put(frame, area, 0, 0, "CPU usage N/A", AMBER);
     }
 }
