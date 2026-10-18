@@ -252,7 +252,10 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
                 assert!(!out.contains(clutter));
             }
             if mode != ViewMode::Charts {
-                assert!(out.contains("╰╯"), "missing face: {width}x{height}\n{out}");
+                assert!(
+                    out.contains("·  ╭╮  ·"),
+                    "missing busy face: {width}x{height}\n{out}"
+                );
                 assert!(out.contains("│ ──── │") || out.contains("╭──────╮"));
             }
             if mode != ViewMode::Computer {
@@ -490,7 +493,7 @@ fn export_svg(app: &App, width: u16, height: u16, elapsed: Duration, path: &std:
 }
 
 #[test]
-fn face_monitor_stand_and_sweat_are_symmetric_in_both_work_frames() {
+fn face_monitor_and_stand_stay_symmetric_while_sweat_moves() {
     let reflect = |c| match c {
         '╭' => '╮',
         '╮' => '╭',
@@ -511,11 +514,40 @@ fn face_monitor_stand_and_sweat_are_symmetric_in_both_work_frames() {
             .unwrap();
         let x = lines[top].chars().position(|c| c == '╭').unwrap() - 3;
         for line in &lines[top..=top + 10] {
-            let body: Vec<_> = line.chars().skip(x).take(24).collect();
+            // 汗は非対称に流す．PC本体と顔だけは対称性を保つ．
+            let body: Vec<_> = line.chars().skip(x + 3).take(18).collect();
             let mirrored: Vec<_> = body.iter().rev().copied().map(reflect).collect();
             assert_eq!(body, mirrored, "unbalanced computer: {line}");
         }
     }
+}
+
+#[test]
+fn sweat_drops_fall_at_different_heights_and_disappear_before_reappearing() {
+    let mut app = p3_app("a");
+    app.scene.character.activity_intensity = Ok(1.0);
+    let drops = |elapsed| {
+        let out = render_at(&app, 80, 24, elapsed);
+        out.lines()
+            .enumerate()
+            .flat_map(|(y, line)| {
+                line.chars()
+                    .enumerate()
+                    .filter_map(move |(x, c)| (c == '╷').then_some((x, y)))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>()
+    };
+    let start = drops(Duration::ZERO);
+    let falling = drops(Duration::from_millis(300));
+    assert_eq!(start.len(), 2);
+    assert_ne!(start[0].1, start[1].1); // No mirrored sweat poses.
+    assert_eq!(
+        falling,
+        start.iter().map(|&(x, y)| (x, y + 1)).collect::<Vec<_>>()
+    );
+    assert!(drops(Duration::from_millis(1500)).is_empty());
+    assert_eq!(drops(Duration::from_secs(2)).len(), 2);
 }
 
 #[test]
@@ -539,11 +571,11 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
             .unwrap();
         let out = text(&terminal);
         if width >= 80 && height >= 24 {
-            assert!(out.contains("╰╯"));
+            assert!(out.contains("·  ╭╮  ·"));
             assert!(out.contains("╰────────╯"));
             assert!(out.contains("Tab view"));
         } else {
-            assert!(!out.contains("╰╯"));
+            assert!(!out.contains("·  ╭╮  ·"));
             assert!(!out.contains("╰────────╯"));
             if width >= 40 && height >= 10 {
                 assert!(out.contains("80 x 24"));
@@ -608,10 +640,13 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         cells
     };
     let relaxed = p3_app("c");
-    assert!(!render(&relaxed, 80, 24).contains('•'));
+    assert!(!render(&relaxed, 80, 24).contains('╷'));
+    assert!(render(&relaxed, 80, 24).contains("·  ╰╯  ·"));
     let mut busy = p3_app("a");
     busy.scene.character.activity_intensity = Ok(0.9);
-    assert!(render(&busy, 80, 24).contains('•'));
+    assert!(render(&busy, 80, 24).contains('╷'));
+    assert!(render(&busy, 80, 24).contains("·  ╭╮  ·"));
+    assert!(!render(&busy, 80, 24).contains("·  ╰╯  ·"));
     assert_ne!(pc(&relaxed), pc(&busy)); // Includes screen and case colours.
     for case in ["b", "d"] {
         let mut other = p3_app(case);
@@ -619,7 +654,7 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         assert_eq!(pc(&busy), pc(&other)); // Waiting/PSI missing must not drive sweating.
     }
     busy.scene.character.activity_intensity = Err(Reason::NotFound);
-    assert!(!render(&busy, 80, 24).contains('•'));
+    assert!(!render(&busy, 80, 24).contains('╷'));
     assert_ne!(pc(&relaxed), pc(&busy)); // Unknown must not look idle.
     for app in [&relaxed, &busy] {
         assert!(!render(app, 80, 24).contains('▪'));

@@ -188,10 +188,8 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         12,
     );
     let intensity = &app.scene.character.activity_intensity;
-    let phase = match intensity {
-        Ok(value) if *value > 0.0 => (elapsed.as_secs_f64() * (0.5 + 5.0 * value)) as u64 % 2 == 1,
-        _ => false,
-    };
+    let busy = intensity.as_ref().is_ok_and(|v| *v >= 0.70);
+    let mouth = if busy { "╭╮" } else { "╰╯" };
     let eyes = if intensity.is_err() {
         "?    ?"
     } else {
@@ -230,7 +228,7 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         "   │ ╭────────────╮ │".into(),
         "   │ │            │ │".into(),
         format!("   │ │   {eyes}   │ │"),
-        "   │ │     ╰╯     │ │".into(),
+        format!("   │ │     {mouth}     │ │"),
         "   │ │            │ │".into(),
         "   │ ╰────────────╯ │".into(),
         "   ╰────────────────╯".into(),
@@ -239,28 +237,26 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         put(frame, stage, 0, y as u16, line, rim);
     }
     put(frame, stage, 9, 3, eyes, FACE);
-    put(frame, stage, 11, 4, "╰╯", FACE);
+    put(frame, stage, 11, 4, mouth, FACE);
     put(frame, stage, 8, 4, "·", CHEEK);
     put(frame, stage, 15, 4, "·", CHEEK);
     put(frame, stage, 10, 8, "│  │", rim);
     put(frame, stage, 7, 9, "╭──┴──┴──╮", rim);
     put(frame, stage, 7, 10, "╰────────╯", rim);
     // 汗はCPU活動だけを参照し，PSIや待機数には結び付けない．
-    if intensity.as_ref().is_ok_and(|v| *v >= 0.70) {
+    if let Ok(value) = intensity
+        && busy
+    {
         put(frame, stage, 9, 2, "╲", FACE);
         put(frame, stage, 14, 2, "╱", FACE);
-        if phase {
-            for x in [0, 23] {
-                put(frame, stage, x, 3, "•", SWEAT);
-            }
-            for x in [1, 22] {
-                put(frame, stage, x, 4, "·", SWEAT);
-            }
-        } else {
-            put(frame, stage, 1, 1, "╱", SWEAT);
-            put(frame, stage, 22, 1, "╲", SWEAT);
-            for x in [0, 23] {
-                put(frame, stage, x, 2, "•", SWEAT);
+        // 別々の周期で生じ，頬の外を下へ流れて消えるしずく．
+        // 観測やSceneを変えず，描画時刻だけで位置を決める．
+        let tick = (elapsed.as_secs_f64() * (1.0 + 3.0 * value)) as u64;
+        for (x, step) in [(0, tick % 8), (22, (tick + 3) % 10)] {
+            if step < 6 {
+                let y = step as u16;
+                put(frame, stage, x + 1, y, "╷", SWEAT);
+                put(frame, stage, x + 1, y + 1, "●", SWEAT);
             }
         }
     }
