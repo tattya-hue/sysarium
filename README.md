@@ -23,13 +23,13 @@ Synthetic fixtures, not a load test. **Mint = relaxed. Warm screen + sweat = bus
 
 | Control | Action |
 |---|---|
-| `Tab` / `1` · `2` · `3` | Switch view: Scene / Charts / Both |
+| `Tab` / `1` · `2` · `3` | Switch view: Animation / Charts / Both |
 | `i` / `?` | Details / help |
 | `Esc` | Back |
 | `↑↓` / `PgUp` / `PgDn` / `Home` | Scroll |
 | `q` / `Ctrl-C` | Quit |
 
-**Scene** shows the character and papers. **Both** adds charts alongside it. Smaller terminals show a resize prompt and live values. Resizing back restores the full view; monitoring continues throughout.
+**Animation** shows the character and papers. **Both** adds charts alongside it. Smaller terminals show a resize prompt and live values. Resizing back restores the full view; monitoring continues throughout.
 
 | Metric | Meaning |
 |---|---|

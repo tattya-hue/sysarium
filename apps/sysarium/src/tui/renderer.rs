@@ -18,6 +18,7 @@ const AMBER: Color = Color::Rgb(239, 190, 113);
 const FACE: Color = Color::Rgb(247, 229, 201);
 const CHEEK: Color = Color::Rgb(226, 145, 139);
 const SWEAT: Color = Color::Rgb(139, 211, 255);
+const SWEAT_FADED: Color = Color::Rgb(79, 115, 141);
 const LINE: Color = Color::Rgb(56, 72, 89);
 
 pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
@@ -94,7 +95,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         ])),
         header[0],
     );
-    let mut tabs: Vec<Span> = [ViewMode::Scene, ViewMode::Charts, ViewMode::Both]
+    let mut tabs: Vec<Span> = [ViewMode::Animation, ViewMode::Charts, ViewMode::Both]
         .into_iter()
         .flat_map(|mode| {
             [
@@ -118,7 +119,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         header[1],
     );
     match app.mode {
-        ViewMode::Scene => {
+        ViewMode::Animation => {
             let pieces =
                 Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
@@ -172,7 +173,7 @@ fn put(frame: &mut Frame, area: Rect, x: u16, y: u16, text: &str, color: Color) 
     }
 }
 
-/// 形・座標・色はRendererだけが持つ．動作速度だけをSceneから受け取る．
+/// 形・座標・色・動作周期はRendererが持ち，Sceneの表示強度を見た目へ写す．
 fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     if area.is_empty() {
         return;
@@ -244,25 +245,24 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     put(frame, stage, 7, 9, "╭──┴──┴──╮", rim);
     put(frame, stage, 7, 10, "╰────────╯", rim);
     // 汗はCPU活動だけを参照し，PSIや待機数には結び付けない．
-    if let Ok(value) = intensity
-        && busy
-    {
+    if busy {
         put(frame, stage, 9, 2, "╲", FACE);
         put(frame, stage, 14, 2, "╱", FACE);
-        // 外へ短く弾けて薄く消える，デフォルメした汗．一度に片側だけ，
-        // 最大2セルに抑え，間に休止を入れる．観測・Sceneは変えない．
-        let tick = (elapsed.as_secs_f64() * (3.0 + value)) as u64;
-        let splash = match tick % 8 {
-            0 => Some((1, 2, "•╲")),
-            1 => Some((0, 1, "•")),
-            2 => Some((0, 1, "·")),
-            4 => Some((21, 3, "╱•")),
-            5 => Some((23, 2, "•")),
-            6 => Some((23, 2, "·")),
+        // 先の細い粒を短く外へ飛ばし，同じ形のまま色を薄くする．
+        // 一度に1セル，300msの動作の後は900ms休む．
+        // 使用率の更新で位相が飛ばないよう，時計だけで時刻を決める．
+        let tick = elapsed.as_millis() / 100;
+        let splash = match tick % 24 {
+            0 => Some((2, 2, "◢", SWEAT)),
+            1 => Some((1, 1, "◢", SWEAT)),
+            2 => Some((0, 1, "◢", SWEAT_FADED)),
+            12 => Some((21, 3, "◣", SWEAT)),
+            13 => Some((22, 2, "◣", SWEAT)),
+            14 => Some((23, 2, "◣", SWEAT_FADED)),
             _ => None,
         };
-        if let Some((x, y, glyph)) = splash {
-            put(frame, stage, x, y, glyph, SWEAT);
+        if let Some((x, y, glyph, color)) = splash {
+            put(frame, stage, x, y, glyph, color);
         }
     }
     papers(frame, stage, 30, 10, &app.scene.task_stack.pressure_level);

@@ -30,7 +30,7 @@ MVPではFeel・Observe・Understandへの入口を検証する．Experimentは�
 - 提供：独立実行できるCLIとTUI．SSH・ヘッドレス環境を考慮する．
 - 対象現象：CPU活動量とCPU競合．
 - 起動：`sysarium`／`sysarium live`でライブ監視．`sysarium --json`はNDJSONの継続出力．単発のスナップショットコマンドは提供しない．
-- TUI：Scene，Charts，Bothの3表示．
+- TUI：Animation，Charts，Bothの3表示．
 - 推定と実測の分離，計測不能時の適切な表示，判断根拠の明示．
 
 ## MVPでは作らないもの
