@@ -1,0 +1,24 @@
+┌Details | sample_id=2 | 表示固定──────┐
+│この詳細は開いた時点の観測．背後の計測│
+│・履歴は継続します．                  │
+│                                      │
+│Inside 0.1.0 | sample_id=2 | sampled_a│
+│t_unix_ms=2000                        │
+│scope: system-view                    │
+│CPU活動量（本プロジェクトの近似値）: 8│
+│5.000 % | source=/proc/stat           │
+│CPU PSI some 区間割合: N/A ({"code":"i│
+│nput_unavailable","reason":{"code":"no│
+│t_found"},"sample_id":2,"source":"/pro│
+│c/pressure/cpu"}) | source=/proc/press│
+│ure/cpu                               │
+│CPU PSI some avg10（平滑化傾向）: N/A │
+│({"code":"input_unavailable","reason":│
+│{"code":"not_found"},"sample_id":2,"so│
+│urce":"/proc/pressure/cpu"})          │
+│procs_running（実行中を含む参考値）: 2│
+│ runnable tasks | source=/proc/stat   │
+│観測区間（単調時計）: 1.000000000 s   │
+│活動と競合は独立した2軸．0は観測できた│
+│ゼロ，N/Aは取得・解析不能．           │
+└↑↓/PgUp/Dn Home Esc | 0/132───────────┘

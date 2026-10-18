@@ -1,0 +1,155 @@
+# Architecture v0.1
+
+## 基本戦略
+
+初期段階は「3 crateのCargo Workspace・1プロセス」のモジュラーモノリスとする．Agentを必須にしない．
+
+```text
+inside/ (repository)
+├── Cargo.toml
+├── Cargo.lock
+├── AGENTS.md
+├── VISION.md
+├── CODEX_START.md
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── MVP.md
+│   └── DECISIONS.md
+├── crates/
+│   ├── inside-core/src/
+│   │   ├── lib.rs
+│   │   ├── observation.rs
+│   │   ├── analysis.rs
+│   │   ├── scene.rs
+│   │   └── explanation.rs
+│   └── inside-linux/src/
+│       ├── lib.rs
+│       ├── collector.rs
+│       ├── cpu.rs
+│       └── psi.rs
+└── apps/
+    └── inside/src/
+        ├── main.rs
+        ├── commands/
+        │   ├── status.rs
+        │   ├── inspect.rs
+        │   └── live.rs
+        └── tui/
+            ├── app.rs
+            └── renderer.rs
+```
+
+実装中に名前や小規模なファイル分割を調整してよいが，責務と依存方向は保持する．
+
+## 依存方向
+
+```text
+apps/inside ─┬──> inside-core
+             └──> inside-linux ───> inside-core
+```
+
+- `inside-core`：OSやUIに依存しない観測値の型，差分からの状態解析，説明，意味的Sceneモデル．Ratatuiやprocfsパーサを取り込まない．
+- `inside-linux`：Linuxの `/proc/stat` と `/proc/pressure/cpu` を読み，OS固有のパースと利用可能性の判定を行う．
+- `apps/inside`：CLI・TUI，ループ，表示切替，履歴バッファ，エラーと端末のライフサイクルを持つ．
+
+`inside-core`がOSファイルに直接アクセスしないことを優先する．抽象的なCollector traitを必要なく増やさず，テスト可能性がある最小APIに留める．
+
+## 論理的なデータフロー
+
+```text
+Linux /proc
+   ↓
+Raw CPU counters / PSI values     [Linux Collector]
+   ↓
+Observation + sampling metadata    [Core model]
+   ↓
+Analysis + evidence + availability [Core]
+   ├──────────────────┐
+   ↓                  ↓
+Semantic Scene     Metric series
+   ↓                  ↓
+Living renderer    Metrics renderer
+   └────────┬─────────┘
+            ↓
+     Unified TUI
+```
+
+MetricsとLivingは別々にOSをサンプリングしない．同じ解析結果，観測時刻，履歴を使う．Sceneはレンダラー固有の座標・ASCII文字・色・画像パスを持たない．
+
+## データ契約（概念．Rustの確定型定義ではない）
+
+### Observation
+
+- `sample_id`：セッション内で一意．
+- `sampled_at_unix_ms`：表示・出力用の壁時計時刻．
+- `elapsed_since_previous`：サンプリング間隔を単調時計で測った時間．初回はなし．
+- `scope`：観測対象スコープ．初期は `/proc` 経由のsystem-viewのみ．コンテナ内で物理ホスト全体と同一とは限らない．
+- `cpu_times`： `/proc/stat` のaggregate `cpu` から得た累積カウンタ．
+- `cpu_psi_some`： `avg10`，`avg60`，`avg300`，`total_us`．取得不可ならUnavailable（理由付き）．
+- `procs_running`：利用できれば参考値として保持．CPU待機タスクの正確な個数ではない．
+- 各値の `source` と欠測理由．
+
+### Analysis
+
+- `cpu_active_ratio`：0.0〜1.0 またはUnavailable．
+- `cpu_psi_some_interval_ratio`：直近サンプリング区間で `Δsome.total_us / Δelapsed_us` を求めた0.0〜1.0 またはUnavailable．
+- `cpu_psi_some_avg10_pct`：0〜100の平滑化された傾向，またはUnavailable．
+- `cpu_interpretation`：活動量と競合の2軸を独立に扱った状態．
+- `evidence`：入力メトリクス，元ファイル，サンプリング区間，解析規則を追える情報．
+- `warnings`：初回で差分が取れない，カウンタ異常，PSI未対応，スコープの留意点など．
+
+### Scene
+
+- `character.activity_intensity`：活動量の表示用正規化値0.0〜1.0，またはUnavailable．
+- `task_stack.pressure_level`：0〜5の**比喩的な段階**，またはUnavailable．
+- `task_stack.represents`：`cpu_contention_metaphor`を明記．
+- `source_sample_id`：対応する観測結果．
+
+0は計測できた上で低い状態．Unavailableは不明であり0に置換してはならない．アニメーションのフレーム番号と表示座標はRendererが持つ．
+
+### View state（UI側）
+
+- `view_mode`：Living / Metrics / Split．
+- `selected_resource`：初期はCPUのみ．
+- `selected_sample_id`：将来の時点選択向け．初期は最新サンプル固定でよい．
+- `metric_history`：短いメモリ上のリングバッファ（初期上限120サンプル）．
+
+## 計算の定義
+
+`/proc/stat` の最初の8 CPU時間フィールド（user, nice, system, idle, iowait, irq, softirq, steal）を扱い，`guest` と `guest_nice` は user / nice と重複するため総和に追加しない．
+
+- `total_delta`：上記8フィールドの総和の差分．
+- `active_delta`：user + nice + system + irq + softirq の差分．
+- `cpu_active_ratio = active_delta / total_delta`．
+
+ここではiowaitやstealを「キャラクターが自ら仕事をした時間」に含めない．一般的な`top`等のCPU表示区分と完全一致を保証する指標ではなく，**本プロジェクトで定義したCPU活動量の近似値**としてラベル付けする．カウンタ逆行・分母0・初回の値はUnavailableとする．
+
+CPU PSI `some`の`total`は累積μs． `Δtotal_us / Δelapsed_us` は直近区間の停滞時間割合を表す． `avg10`は10秒窓の単純な算術平均ではなく平滑化された傾向として扱う．system-level CPU `full`は指標として使用しない．
+
+`procs_running`は実行中も含むrunnableの参考値であり，待ち行列の長さと等置しない．`procs_running - CPU数`で正確な待機タスク数を推定しない．
+
+## Sceneへの初期マッピング
+
+- キャラクターの活動：`cpu_active_ratio`を表示用に平滑化する．実測・解析値自体は改変しない．
+- 仕事の山：`cpu_psi_some_interval_ratio`から0〜5段階に量子化する．しきい値は説明可能な暫定ルールとし，実測検証後に変更できるよう1か所で定義する．初回・欠測時は `?` などの不明表示にする．
+- 例示の暫定しきい値（比喩の段階であり，問題判定の臨床的・運用上の基準ではない）：`<0.5%:0`，`0.5〜<2%:1`，`2〜<5%:2`，`5〜<10%:3`，`10〜<25%:4`，`>=25%:5`．
+- チラつきを避けるため，Scene側にのみ簡単な平滑化またはヒステリシスを適用できる．MVPでは無理に複雑な状態機械を作らない．
+
+## 実行モデル
+
+- 観測：原則1 Hz．
+- 描画：最大10 FPSを初期目安とし，アニメーションとサンプリングを分離．
+- `inside status`：十分な差分が必要なため2サンプルを約1秒間隔で取得する．取得できない値は明示する．
+- `inside inspect cpu`：同じデータ経路で計測値，計算方法，ソース，欠測理由を表示する．
+- `inside live`：最新解析と短期履歴を使い3モードを切り替える．
+- エラー発生時：画面を落とすのではなく計測不能を示す．致命的な端末エラーでは終了処理で端末状態を復旧する．
+
+## 将来の拡張境界
+
+Agent・IPC・GUI・記録再生・Simulationは**現段階で実装しない**．将来，GUI/TauriがCoreを直接利用する構成を可能にする．Agent導入時も同じ観測/解析モデルを転送対象にできるよう，不要なUI型やLinuxのファイルハンドルをCoreモデルへ混入させない．
+
+## v0.1の詳細表示と終了処理
+
+通常のライブ画面は最新sample_idを表示する．`i`で詳細を開いた時点だけ，同じAnalysisとSceneから生成した診断文字列をUI側に1つ保持する．表示固定中も観測・履歴更新は継続し，閉じると最新画面へ戻る．履歴の時点選択・記録再生・Simulationは導入しない．ヘルプ・詳細はスクロール可能とし，短縮表示された理由の全文へたどれるようにする．
+
+Unixの終了シグナルはアプリ側のフラグへ通知し，イベントループを終了して通常の端末復旧へ進む．signal-hookはapps/insideのみの依存とし，Core・Linux Collectorへ持ち込まない．シグナルハンドラ内で端末I/Oや解析は行わない．
