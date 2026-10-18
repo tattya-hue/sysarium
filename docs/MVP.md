@@ -4,19 +4,19 @@
 
 | コマンド | 振る舞い |
 |---|---|
-| `inside status` | CPU活動量，CPU PSI some，runnable参考値，観測スコープ，欠測理由を読みやすく表示． |
-| `inside status --json` | 同じ観測・解析を構造化JSONで出力．stdoutはJSONのみ．バージョンと単位，欠測理由を含める． |
-| `inside inspect cpu` | 観測元，計測値，差分計算，解釈と根拠，制限事項を表示． |
-| `inside live` | RatatuiでLiving / Metrics / Splitを表示． `Tab`で表示切替，`q`で終了． |
+| `inside` / `inside live` | Splitを初期表示としてライブ監視．Tab／1・2・3で切替，qで終了． |
+| `inside --json` / `inside live --json` | 約1HzのNDJSONストリーム．初回・欠測理由と根拠を保持する． |
+| ライブ画面の`i` | 最新の観測元・計測値・差分・単位・欠測理由へ追随する詳細． |
 
-CLIサブコマンドの正式名称は上記とする．`inside inspect process`，`record`，`replay`，`sim`はv0.1で提供しない．
+利用者からの指摘に基づき単発のstatus／inspectは廃止した．以下のPhase計画はこのライブ中心の仕様へ更新している．`record`，`replay`，`sim`は提供しない．
 
 ## TUIの最低要件
 
-- Living：1体のASCII PCキャラクター．CPU活動量に応じて働く動作を変える．CPU競合で仕事の山（0〜5段階）が変化する．
+- Living：余白を持つ1体のUnicode PCキャラクター．CPU活動量に応じて働く動作を変える．CPU競合で仕事の山（0〜5段階）が変化する．
+- 通常画面は数値・履歴・キャラクターを優先し，内部ID・取得元・説明文は詳細・ヘルプへ集約する．
 - Metrics：CPU活動量，CPU PSI some（1サンプル区間とavg10），参考runnable値，短い時系列を表示する．
 - Split：同じ時点に対応するLivingとMetricsを並列表示する．端末幅が狭いときは縦並びまたは簡略表示に退避する．
-- 計測不能時は0や空の山に見せず `N/A` または `?` と理由を出す．
+- 計測不能時は0や空の山に見せず `N/A` または `?` と表示し，理由全文はiで確認できるようにする．
 - 端末リサイズに対応し，`q`と一般的なエラー終了時に端末状態を復旧する．
 - 画面を派手にするために，計測値と無関係なCPU競合アニメーションを発生させない．
 
@@ -35,7 +35,7 @@ CLIサブコマンドの正式名称は上記とする．`inside inspect process
 
 - 2サンプル差分と単調時計による区間測定．
 - CoreにCPU活動量，PSI some区間割合，警告・根拠のモデル．
-- `status`，`status --json`，`inspect cpu`．
+- ライブ観測に共通の解析・根拠出力．機械向けは`--json`の継続ストリーム．
 - 0除算，カウンタ逆行，初回観測，PSI欠測のテスト．
 
 ### P2：SceneとTUI
@@ -60,7 +60,7 @@ CLIサブコマンドの正式名称は上記とする．`inside inspect process
 - 正常なfixture，余分なフィールド，欠損フィールド，不正数値，PSIファイル欠測を検証している．
 - 初回サンプルをCPU活動量0%として誤表示しない．
 - CPU競合が欠測なら仕事の山を0と誤表示しない．
-- `status --json` は機械可読で，stdoutにデバッグメッセージを混入しない．
+- `--json` は1行1JSONの機械可読で，stdoutにデバッグメッセージを混入しない．
 - LivingとMetricsで同じsample_idの解析結果が対応する．
 - `procs_running`を待ち行列の個数として表示しない．
 - READMEに環境要件，主要コマンド，指標の定義，制約事項を記す．

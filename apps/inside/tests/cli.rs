@@ -13,13 +13,7 @@ fn version_and_all_help_paths_work_without_a_terminal() {
         format!("inside {}\n", env!("CARGO_PKG_VERSION"))
     );
     assert!(version.stderr.is_empty());
-    for args in [
-        vec!["--help"],
-        vec!["status", "--help"],
-        vec!["inspect", "--help"],
-        vec!["inspect", "cpu", "-h"],
-        vec!["live", "--help"],
-    ] {
+    for args in [vec!["--help"], vec!["live", "--help"]] {
         let result = inside().args(args).output().unwrap();
         assert!(result.status.success());
         assert!(String::from_utf8(result.stdout).unwrap().contains("usage:"));
@@ -28,29 +22,44 @@ fn version_and_all_help_paths_work_without_a_terminal() {
 }
 
 #[test]
-fn process_stdout_contains_exactly_one_json_document() {
-    let result = inside().args(["status", "--json"]).output().unwrap();
-    assert!(result.status.success());
-    assert!(result.stderr.is_empty());
-    let value: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
-    assert_eq!(value["schema_version"], 1);
-    assert_eq!(value["sample_id"], 2);
-    assert_eq!(value["metrics"]["cpu_active_ratio"]["unit"], "ratio");
-    for name in ["cpu_active_ratio", "cpu_psi_some_interval_ratio"] {
-        let metric = &value["metrics"][name];
-        if metric["status"] == "available" {
-            assert!((0.0..=1.0).contains(&metric["value"].as_f64().unwrap()));
-        } else {
-            assert_eq!(metric["status"], "unavailable");
-            assert!(metric["value"].is_null());
-            assert!(metric["reason"].is_object());
+fn process_stream_is_line_delimited_and_broken_pipe_exits_cleanly() {
+    use std::{
+        io::{BufRead, BufReader},
+        process::Stdio,
+    };
+    let mut child = inside()
+        .arg("--json")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut reader = BufReader::new(child.stdout.take().unwrap());
+    for id in 1..=2 {
+        let mut line = String::new();
+        reader.read_line(&mut line).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&line).unwrap();
+        assert_eq!(value["schema_version"], 1);
+        assert_eq!(value["sample_id"], id);
+        assert_eq!(value["metrics"]["cpu_active_ratio"]["unit"], "ratio");
+        if id == 1 {
+            assert!(value["metrics"]["cpu_active_ratio"]["value"].is_null());
         }
     }
+    drop(reader);
+    let result = child.wait_with_output().unwrap();
+    assert!(result.status.success());
+    assert!(result.stderr.is_empty());
 }
 
 #[test]
 fn invalid_options_and_non_tty_live_report_errors_only_on_stderr() {
-    for (args, code) in [(vec!["status", "--unknown"], 2), (vec!["live"], 1)] {
+    for (args, code) in [
+        (vec!["status"], 2),
+        (vec!["inspect", "cpu"], 2),
+        (vec!["--unknown"], 2),
+        (vec!["live"], 1),
+        (vec![], 1),
+    ] {
         let result = inside().args(args).output().unwrap();
         assert_eq!(result.status.code(), Some(code));
         assert!(result.stdout.is_empty());

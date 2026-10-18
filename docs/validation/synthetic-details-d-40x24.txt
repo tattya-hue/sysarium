@@ -1,6 +1,5 @@
-┌Details | sample_id=2 | 表示固定──────┐
-│この詳細は開いた時点の観測．背後の計測│
-│・履歴は継続します．                  │
+┌ Details · LIVE · sample_id=2 ────────┐
+│最新の観測に追随します．              │
 │                                      │
 │Inside 0.1.0 | sample_id=2 | sampled_a│
 │t_unix_ms=2000                        │
@@ -21,4 +20,5 @@
 │観測区間（単調時計）: 1.000000000 s   │
 │活動と競合は独立した2軸．0は観測できた│
 │ゼロ，N/Aは取得・解析不能．           │
-└↑↓/PgUp/Dn Home Esc | 0/132───────────┘
+│system-viewは可視の/procの範囲．コンテ│
+└ ↑↓ PgUp/PgDn Home · Esc 戻る · q 終了┘

@@ -96,7 +96,7 @@ pub fn json(analysis: &Analysis) -> io::Result<String> {
         "warnings":analysis.warnings.iter().map(|w| json!({"metric":w.metric,"reason":reason(&w.reason)})).collect::<Vec<_>>(),
         "limitations":[SCOPE_WARNING, METRIC_WARNING],
     });
-    serde_json::to_string_pretty(&value).map_err(io::Error::other)
+    serde_json::to_string(&value).map_err(io::Error::other)
 }
 
 fn display(value: &Result<f64, Reason>, multiplier: f64, unit: &str) -> String {

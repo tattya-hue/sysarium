@@ -1,14 +1,10 @@
-use crate::{Command, output, run_with};
+use crate::output;
 use inside_core::{
     analysis::analyze,
     observation::{Observation, SYSTEM_VIEW, UnavailableReason as Reason},
 };
 use serde_json::{Value, json};
-use std::{
-    cell::Cell,
-    path::Path,
-    time::{Duration, Instant},
-};
+use std::{path::Path, time::Duration};
 
 pub(crate) fn fixture(id: u64) -> Observation {
     Observation {
@@ -24,29 +20,22 @@ pub(crate) fn fixture(id: u64) -> Observation {
     }
 }
 
-fn render(command: Command, modify: impl Fn(&mut Observation)) -> String {
-    let mut out = Vec::new();
-    let start = Instant::now();
-    let pauses = Cell::new(0);
-    run_with(
-        command,
-        &mut out,
-        |id, previous| {
-            assert_eq!(previous, if id == 1 { None } else { Some(start) });
-            let mut observation = fixture(id);
-            modify(&mut observation);
-            Ok((observation, start + Duration::from_secs(id - 1)))
-        },
-        || pauses.set(pauses.get() + 1),
-    )
-    .unwrap();
-    assert_eq!(pauses.get(), 1);
-    String::from_utf8(out).unwrap()
+fn render(inspect: bool, modify: impl Fn(&mut Observation)) -> String {
+    let mut previous = fixture(1);
+    let mut current = fixture(2);
+    modify(&mut previous);
+    modify(&mut current);
+    let analysis = analyze(Some(&previous), &current);
+    if inspect {
+        output::text(&analysis, true)
+    } else {
+        output::json(&analysis).unwrap()
+    }
 }
 
 #[test]
-fn cli_json_is_one_document_with_versions_units_and_reproducible_evidence() {
-    let text = render(Command::Json, |_| {});
+fn each_json_record_has_versions_units_and_reproducible_evidence() {
+    let text = render(false, |_| {});
     let value: Value = serde_json::from_str(&text).unwrap();
     assert_eq!(value["schema_version"], 1);
     assert_eq!(value["version"], env!("CARGO_PKG_VERSION"));
@@ -110,7 +99,7 @@ fn json_unavailable_is_null_with_nested_reason_and_valid_axis_survives() {
             value: "bad\n\"value".into(),
         },
     ] {
-        let value: Value = serde_json::from_str(&render(Command::Json, |o| {
+        let value: Value = serde_json::from_str(&render(false, |o| {
             if o.sample_id == 2 {
                 o.readings.cpu_psi_some.value = Err(cause.clone());
             }
@@ -148,14 +137,12 @@ fn first_sample_output_does_not_claim_zero_activity() {
 }
 
 #[test]
-fn status_and_inspect_share_metrics_and_inspect_explains_inputs() {
-    let status = render(Command::Status, |_| {});
-    let inspect = render(Command::Inspect, |_| {});
-    assert!(inspect.starts_with(&status));
-    assert!(status.contains("80.000 %"));
-    assert!(status.contains("25.000 %"));
-    assert!(status.contains("2.500 %"));
-    assert!(status.contains("実行中を含む参考値"));
+fn live_details_explain_values_units_and_inputs() {
+    let inspect = render(true, |_| {});
+    assert!(inspect.contains("80.000 %"));
+    assert!(inspect.contains("25.000 %"));
+    assert!(inspect.contains("2.500 %"));
+    assert!(inspect.contains("実行中を含む参考値"));
     for detail in [
         "previous 観測値",
         "current 観測値",
@@ -170,7 +157,7 @@ fn status_and_inspect_share_metrics_and_inspect_explains_inputs() {
     ] {
         assert!(inspect.contains(detail), "missing {detail}");
     }
-    let text = render(Command::Status, |o| {
+    let text = render(true, |o| {
         if o.sample_id == 2 {
             o.readings.procs_running.value = Err(Reason::PermissionDenied);
         }
@@ -180,36 +167,42 @@ fn status_and_inspect_share_metrics_and_inspect_explains_inputs() {
 }
 
 #[test]
-fn writer_failure_is_returned_and_help_never_samples() {
-    for command in [
-        Command::Help,
-        Command::StatusHelp,
-        Command::InspectHelp,
-        Command::LiveHelp,
-        Command::Version,
-    ] {
-        let mut out = Vec::new();
-        run_with(
-            command,
-            &mut out,
-            |_, _| panic!("help/version must not sample"),
-            || panic!("help/version must not sleep"),
-        )
-        .unwrap();
-        let text = String::from_utf8(out).unwrap();
-        assert!(text.contains(if command == Command::Version {
-            "inside 0.1.0"
-        } else {
-            "usage:"
-        }));
+fn stream_emits_flushed_sequential_documents_and_propagates_writer_errors() {
+    use std::{cell::Cell, io, time::Instant};
+    let count = Cell::new(0);
+    let origin = Instant::now() - Duration::from_secs(10);
+    let mut output = Vec::new();
+    crate::stream(
+        &mut output,
+        |id, previous| {
+            assert_eq!(
+                previous,
+                (id > 1).then(|| origin + Duration::from_secs(id - 2))
+            );
+            count.set(count.get() + 1);
+            Ok((fixture(id), origin + Duration::from_secs(id - 1)))
+        },
+        || panic!("fixture must not wait"),
+        || count.get() == 3,
+    )
+    .unwrap();
+    let text = String::from_utf8(output).unwrap();
+    let values: Vec<Value> = text
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    assert_eq!(values.len(), 3);
+    for (i, value) in values.iter().enumerate() {
+        assert_eq!(value["sample_id"], i + 1);
     }
-    let start = Instant::now();
-    let error = run_with(
-        Command::Json,
+    assert!(values[0]["metrics"]["cpu_active_ratio"]["value"].is_null());
+    assert_eq!(values[1]["metrics"]["cpu_active_ratio"]["value"], 0.8);
+    let error = crate::stream(
         &mut &mut [][..],
-        |id, _| Ok((fixture(id), start)),
+        |id, _| Ok((fixture(id), origin)),
         || {},
+        || false,
     )
     .unwrap_err();
-    assert_eq!(error.kind(), std::io::ErrorKind::WriteZero);
+    assert_eq!(error.kind(), io::ErrorKind::WriteZero);
 }

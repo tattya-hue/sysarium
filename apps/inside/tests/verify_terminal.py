@@ -84,7 +84,7 @@ def verify(args, interactive=False, terminate_signal=None):
 
 def main():
     subprocess.run(["cargo", "build", "-p", "inside"], cwd=ROOT, check=True)
-    verify([str(ROOT / "target/debug/inside"), "live"], interactive=True)
+    verify([str(ROOT / "target/debug/inside")], interactive=True)
     for stop_signal in [signal.SIGTERM, signal.SIGHUP, signal.SIGINT]:
         verify([str(ROOT / "target/debug/inside"), "live"], terminate_signal=stop_signal)
     for name in ["restores_after_error", "restores_after_panic"]:

@@ -1,6 +1,6 @@
 mod app;
 mod renderer;
-mod shutdown;
+use crate::shutdown;
 mod terminal;
 
 use app::App;

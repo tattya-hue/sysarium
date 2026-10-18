@@ -1,6 +1,6 @@
 # v0.1.0 出荷確認
 
-状態：リリース候補の準備中．正式タグ・公開日は未確定．
+状態：利用者評価によりライブ中心の表示・CLIへ改訂．正式タグ・公開日は未確定．下表のclone・install確認は旧候補時点の記録で，新しい表示の利用者確認は継続中．
 
 ## 出荷内容
 
@@ -8,7 +8,7 @@
 
 ## 判定表
 
-| 項目 | 状態 | 根拠・残作業 |
+| 項目 | 旧候補時点の状態 | 根拠・残作業 |
 |---|---|---|
 | 実装・fixture・設計文書のGit登録 | 完了 | `77d1e33`に登録．最終的な公開対象は以降の出荷準備コミットも含む |
 | クリーンなcloneからのstable検証 | 完了 | Rust 1.95.0でfmt，55件の通常テスト，Clippy，実PTYが成功 |
@@ -37,7 +37,7 @@ cargo +1.88.0 test --workspace --locked
 cargo +1.88.0 build --release --locked -p inside
 cargo install --path apps/inside --locked --root "$PWD/target/install-check"
 ./target/install-check/bin/inside --version
-./target/install-check/bin/inside status --json
+./target/install-check/bin/inside --json | head -n 2
 git status --porcelain
 ```
 
@@ -64,10 +64,10 @@ git status --porcelain
 実端末またはSSHのPTYで`inside live`を起動する．80×24以上から始め，40×24へ縮小して元へ戻す．Tab，i，?，スクロール，Esc，qを試す．
 
 - 日本語とPC・山が崩れず，CPU・PSI・runnableの値を読めるか．
-- LivingとMetricsが同じsample_idの状態を示すことが分かるか．
+- LivingとMetricsが同時に変化する状態を対応付けられるか（sample_idはiで確認）．
 - 山の段階を「待っているタスクの個数」と誤読しないか．
 - N/A・`?`を「0」と誤読しないか．
-- iから根拠・欠測理由の全文へ進み，最新画面へ戻れるか．
+- iでライブの根拠・欠測理由を読めて，通常画面へ戻れるか．
 - q終了後に文字入力・改行・カーソル・元の画面が通常どおりか．
 
 記録：
@@ -88,7 +88,7 @@ git status --porcelain
 
 手動確認の未完了時点では，タグ作成・push・GitHub Release公開は完了扱いにしない．
 
-## ローカルでの実行記録
+## 旧候補のローカル実行記録（ライブ中心改訂前）
 
 2026-10-18，Linux 6.18.54.1-microsoft-standard-WSL2で実行した．入力は実装commit `77d1e33514767572d4fc80e6b86911903f7ac5a0`のローカルclone．元の作業ツリーの未追跡ファイルをコピーせず，独立したtargetと専用インストールprefixを使用した．Rust 1.88.0は今回minimal toolchainを導入して検証した．
 
@@ -99,3 +99,7 @@ git status --porcelain
 - CI YAMLの構文とmatrixをローカルで確認．GitHub-hosted runnerでのCI実行はpush後に別途確認する．
 
 出荷準備コミットではCIと公開前の文書を追加する．アプリの機能・暫定しきい値は変更しない．最終コミットのソースアーカイブとSHA-256は，作業ツリーの`target/release-artifacts/`へ生成する（生成物自体はコミットしない）．これを手動確認用候補として使えるが，正式版の公開を意味しない．
+
+## ライブ中心改訂後の確認
+
+`inside`でSplitを開き，`inside --json`はNDJSONを継続出力する．旧status／inspectは提供しない．新CLI・レイアウトの通常テスト，fmt，Clippy，最小Rust，releaseビルド，PTYの結果は`docs/P3-VALIDATION.md`を参照．旧候補のアーカイブは今回の改訂を含まないため，公開時には最終コミットから作り直す．
