@@ -94,7 +94,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         ])),
         header[0],
     );
-    let mut tabs: Vec<Span> = [ViewMode::Computer, ViewMode::Charts, ViewMode::Both]
+    let mut tabs: Vec<Span> = [ViewMode::Scene, ViewMode::Charts, ViewMode::Both]
         .into_iter()
         .flat_map(|mode| {
             [
@@ -118,7 +118,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         header[1],
     );
     match app.mode {
-        ViewMode::Computer => {
+        ViewMode::Scene => {
             let pieces =
                 Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
@@ -249,15 +249,20 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     {
         put(frame, stage, 9, 2, "╲", FACE);
         put(frame, stage, 14, 2, "╱", FACE);
-        // 別々の周期で生じ，頬の外を下へ流れて消えるしずく．
-        // 観測やSceneを変えず，描画時刻だけで位置を決める．
-        let tick = (elapsed.as_secs_f64() * (1.0 + 3.0 * value)) as u64;
-        for (x, step) in [(0, tick % 8), (22, (tick + 3) % 10)] {
-            if step < 6 {
-                let y = step as u16;
-                put(frame, stage, x + 1, y, "╷", SWEAT);
-                put(frame, stage, x + 1, y + 1, "●", SWEAT);
-            }
+        // 外へ短く弾けて薄く消える，デフォルメした汗．一度に片側だけ，
+        // 最大2セルに抑え，間に休止を入れる．観測・Sceneは変えない．
+        let tick = (elapsed.as_secs_f64() * (3.0 + value)) as u64;
+        let splash = match tick % 8 {
+            0 => Some((1, 2, "•╲")),
+            1 => Some((0, 1, "•")),
+            2 => Some((0, 1, "·")),
+            4 => Some((21, 3, "╱•")),
+            5 => Some((23, 2, "•")),
+            6 => Some((23, 2, "·")),
+            _ => None,
+        };
+        if let Some((x, y, glyph)) = splash {
+            put(frame, stage, x, y, glyph, SWEAT);
         }
     }
     papers(frame, stage, 30, 10, &app.scene.task_stack.pressure_level);

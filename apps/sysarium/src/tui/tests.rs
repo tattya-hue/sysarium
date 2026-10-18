@@ -166,12 +166,20 @@ fn live_defaults_to_both_and_keys_switch_without_resampling() {
     let mut app = app();
     assert_eq!(app.mode, ViewMode::Both);
     let original = app.analysis.clone();
-    for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
+    let header = render(&app, 80, 24);
+    assert!(header.contains("View:") && header.contains("Scene"));
+    assert!(!header.contains("Computer"));
+    press(&mut app, KeyCode::Char('?'));
+    let help = &app.overlay.as_ref().unwrap().text;
+    assert!(help.contains("Scene / Charts / Both"));
+    assert!(!help.contains("Computer"));
+    press(&mut app, KeyCode::Esc);
+    for mode in [ViewMode::Scene, ViewMode::Charts, ViewMode::Both] {
         assert!(!press(&mut app, KeyCode::Tab));
         assert_eq!(app.mode, mode);
     }
     for (key, mode) in [
-        ('1', ViewMode::Computer),
+        ('1', ViewMode::Scene),
         ('2', ViewMode::Charts),
         ('3', ViewMode::Both),
     ] {
@@ -238,7 +246,7 @@ fn fixture_pipeline_retains_both_axes_and_shared_observation() {
 #[test]
 fn supported_sizes_preserve_primary_values_without_technical_clutter() {
     for (width, height) in [(140, 34), (120, 32), (100, 24), (80, 24)] {
-        for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
+        for mode in [ViewMode::Scene, ViewMode::Charts, ViewMode::Both] {
             let mut app = p3_app("b");
             app.mode = mode;
             let out = render(&app, width, height);
@@ -258,7 +266,7 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
                 );
                 assert!(out.contains("│ ──── │") || out.contains("╭──────╮"));
             }
-            if mode != ViewMode::Computer {
+            if mode != ViewMode::Scene {
                 assert!(out.contains("CPU wait"));
                 assert!(out.contains("10s trend"));
                 assert!(out.contains("?")); // first observation remains a history gap
@@ -523,7 +531,7 @@ fn face_monitor_and_stand_stay_symmetric_while_sweat_moves() {
 }
 
 #[test]
-fn sweat_drops_fall_at_different_heights_and_disappear_before_reappearing() {
+fn sweat_splashes_outward_one_side_at_a_time_with_pauses() {
     let mut app = p3_app("a");
     app.scene.character.activity_intensity = Ok(1.0);
     let drops = |elapsed| {
@@ -533,21 +541,26 @@ fn sweat_drops_fall_at_different_heights_and_disappear_before_reappearing() {
             .flat_map(|(y, line)| {
                 line.chars()
                     .enumerate()
-                    .filter_map(move |(x, c)| (c == '╷').then_some((x, y)))
+                    .filter_map(move |(x, c)| (c == '•').then_some((x, y)))
                     .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>()
     };
-    let start = drops(Duration::ZERO);
-    let falling = drops(Duration::from_millis(300));
-    assert_eq!(start.len(), 2);
-    assert_ne!(start[0].1, start[1].1); // No mirrored sweat poses.
-    assert_eq!(
-        falling,
-        start.iter().map(|&(x, y)| (x, y + 1)).collect::<Vec<_>>()
-    );
-    assert!(drops(Duration::from_millis(1500)).is_empty());
-    assert_eq!(drops(Duration::from_secs(2)).len(), 2);
+    let left = drops(Duration::ZERO);
+    let left_outward = drops(Duration::from_millis(300));
+    let right = drops(Duration::from_secs(1));
+    let right_outward = drops(Duration::from_millis(1300));
+    assert_eq!(left.len(), 1);
+    assert_eq!(left_outward.len(), 1);
+    assert_eq!(right.len(), 1);
+    assert_eq!(right_outward.len(), 1);
+    assert!(left_outward[0].0 < left[0].0 && left_outward[0].1 < left[0].1);
+    assert!(right_outward[0].0 > right[0].0 && right_outward[0].1 < right[0].1);
+    assert!(drops(Duration::from_millis(750)).is_empty());
+    assert!(drops(Duration::from_millis(1750)).is_empty());
+    for step in 0..24 {
+        assert!(drops(Duration::from_millis(step * 100)).len() <= 1);
+    }
 }
 
 #[test]
@@ -602,7 +615,7 @@ fn all_views_overlays_and_unavailable_states_use_english_copy() {
         )
     };
     for mut app in [App::new(fixture(1)), p3_app("b"), p3_app("d")] {
-        for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
+        for mode in [ViewMode::Scene, ViewMode::Charts, ViewMode::Both] {
             app.mode = mode;
             no_cjk(&render(&app, 80, 24));
         }
@@ -640,11 +653,11 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         cells
     };
     let relaxed = p3_app("c");
-    assert!(!render(&relaxed, 80, 24).contains('╷'));
+    assert!(!render(&relaxed, 80, 24).contains('•'));
     assert!(render(&relaxed, 80, 24).contains("·  ╰╯  ·"));
     let mut busy = p3_app("a");
     busy.scene.character.activity_intensity = Ok(0.9);
-    assert!(render(&busy, 80, 24).contains('╷'));
+    assert!(render(&busy, 80, 24).contains('•'));
     assert!(render(&busy, 80, 24).contains("·  ╭╮  ·"));
     assert!(!render(&busy, 80, 24).contains("·  ╰╯  ·"));
     assert_ne!(pc(&relaxed), pc(&busy)); // Includes screen and case colours.
@@ -654,7 +667,7 @@ fn computer_activity_is_visible_without_keyboard_and_independent_of_wait() {
         assert_eq!(pc(&busy), pc(&other)); // Waiting/PSI missing must not drive sweating.
     }
     busy.scene.character.activity_intensity = Err(Reason::NotFound);
-    assert!(!render(&busy, 80, 24).contains('╷'));
+    assert!(!render(&busy, 80, 24).contains('•'));
     assert_ne!(pc(&relaxed), pc(&busy)); // Unknown must not look idle.
     for app in [&relaxed, &busy] {
         assert!(!render(app, 80, 24).contains('▪'));

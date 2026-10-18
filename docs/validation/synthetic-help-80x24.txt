@@ -1,7 +1,7 @@
 ┌ Help ────────────────────────────────────────────────────────────────────────┐
 │Sysarium 0.1.0                                                                │
 │                                                                              │
-│Tab        Switch view: Computer / Charts / Both                              │
+│Tab        Switch view: Scene / Charts / Both                                 │
 │1 / 2 / 3  Select view                                                        │
 │i          Details                                                            │
 │?          Help                                                               │

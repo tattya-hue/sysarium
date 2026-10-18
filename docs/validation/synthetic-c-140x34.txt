@@ -1,5 +1,5 @@
 
-  sysarium  ● LIVE                                                                                       View:  Computer   Charts   Both
+  sysarium  ● LIVE                                                                                          View:  Scene   Charts   Both
 
                                                                                      CPU usage  8.0%
                                                                                      Working

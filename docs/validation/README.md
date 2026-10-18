@@ -55,3 +55,7 @@ python3 scripts/render_previews.py target/readme-previews docs/assets
 ## 汗と表情の更新
 
 A/B/Dの忙しい口を下向きへ変更．汗は青い小さなしずくが左右別の周期で下へ流れて消える．顔・モニター・スタンドは対称を保つ．READMEのA/B動画も更新し，Cの落ち着いた表示は維持する．
+
+## 控えめな飛び散りと表示名
+
+現行表示はScene / Charts / Both．汗は片側ずつ短く外へ飛び，薄くなって消える．最大2セルと休止を設け，下降動作を置き換えた．READMEのA/B動画とCの静止画を含め，同じ手順で更新する．過去のComputerという表示名と垂れる汗の記述は旧表示を指す．

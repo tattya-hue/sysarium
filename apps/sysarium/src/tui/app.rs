@@ -12,7 +12,7 @@ pub const HISTORY_LIMIT: usize = 120;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ViewMode {
-    Computer,
+    Scene,
     Charts,
     Both,
 }
@@ -20,16 +20,16 @@ pub enum ViewMode {
 impl ViewMode {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Computer => "Computer",
+            Self::Scene => "Scene",
             Self::Charts => "Charts",
             Self::Both => "Both",
         }
     }
     fn next(self) -> Self {
         match self {
-            Self::Computer => Self::Charts,
+            Self::Scene => Self::Charts,
             Self::Charts => Self::Both,
-            Self::Both => Self::Computer,
+            Self::Both => Self::Scene,
         }
     }
 }
@@ -169,7 +169,7 @@ impl App {
 
     fn help() -> Overlay {
         let text = format!(
-            "Sysarium {}\n\nTab        Switch view: Computer / Charts / Both\n1 / 2 / 3  Select view\ni          Details\n?          Help\nEsc        Back\n↑↓ / PgUp / PgDn / Home  Scroll\nq / Ctrl-C Quit\n\nCPU usage  Working: CPU time doing work (approx.).\nCPU wait   Time when tasks had to wait for CPU.\nWait time  Milliseconds with any task waiting; not per-task totals.\nUsage and wait can both be high.\nPSI        Linux measures how long tasks wait for CPU.\n10s trend  Recent CPU wait, smoothed over ~10s.\nRunnable   Running + ready to run; not a waiting count.\n\nScreen color and sweat reflect CPU usage.\nPapers reflect CPU wait; not a task count.\nN/A or ? = unknown. First reading needs ~1s.\nCharts: past → now, 0–100%, up to 120 readings.\n▁ = zero / near zero; ? = missing.\n\n80 x 24 minimum. Updates ~1/s; animation up to 10 FPS.\nRaw data and formulas: sysarium --json",
+            "Sysarium {}\n\nTab        Switch view: Scene / Charts / Both\n1 / 2 / 3  Select view\ni          Details\n?          Help\nEsc        Back\n↑↓ / PgUp / PgDn / Home  Scroll\nq / Ctrl-C Quit\n\nCPU usage  Working: CPU time doing work (approx.).\nCPU wait   Time when tasks had to wait for CPU.\nWait time  Milliseconds with any task waiting; not per-task totals.\nUsage and wait can both be high.\nPSI        Linux measures how long tasks wait for CPU.\n10s trend  Recent CPU wait, smoothed over ~10s.\nRunnable   Running + ready to run; not a waiting count.\n\nScreen color and sweat reflect CPU usage.\nPapers reflect CPU wait; not a task count.\nN/A or ? = unknown. First reading needs ~1s.\nCharts: past → now, 0–100%, up to 120 readings.\n▁ = zero / near zero; ? = missing.\n\n80 x 24 minimum. Updates ~1/s; animation up to 10 FPS.\nRaw data and formulas: sysarium --json",
             env!("CARGO_PKG_VERSION")
         );
         Overlay {
@@ -240,7 +240,7 @@ impl App {
                 KeyCode::Tab if self.overlay.is_none() => self.mode = self.mode.next(),
                 KeyCode::Char('1' | '2' | '3') if self.overlay.is_none() => {
                     self.mode = match key.code {
-                        KeyCode::Char('1') => ViewMode::Computer,
+                        KeyCode::Char('1') => ViewMode::Scene,
                         KeyCode::Char('2') => ViewMode::Charts,
                         _ => ViewMode::Both,
                     };

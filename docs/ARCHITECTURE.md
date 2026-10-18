@@ -68,13 +68,13 @@ Analysis + evidence + availability [Core]
    ↓                  ↓
 Semantic Scene     Metric series
    ↓                  ↓
-Computer renderer    Charts renderer
+Scene renderer       Charts renderer
    └────────┬─────────┘
             ↓
      Unified TUI
 ```
 
-ChartsとComputerは別々にOSをサンプリングしない．同じ解析結果，観測時刻，履歴を使う．Sceneはレンダラー固有の座標・ASCII文字・色・画像パスを持たない．
+Charts表示とScene表示は別々にOSをサンプリングしない．同じ解析結果，観測時刻，履歴を使う．Sceneはレンダラー固有の座標・ASCII文字・色・画像パスを持たない．
 
 ## データ契約（概念．Rustの確定型定義ではない）
 
@@ -109,7 +109,7 @@ ChartsとComputerは別々にOSをサンプリングしない．同じ解析結�
 
 ### View state（UI側）
 
-- `view_mode`：Computer / Charts / Both．
+- `view_mode`：Scene / Charts / Both．
 - `selected_resource`：初期はCPUのみ．
 - `selected_sample_id`：将来の時点選択向け．初期は最新サンプル固定でよい．
 - `metric_history`：短いメモリ上のリングバッファ（初期上限120サンプル）．
