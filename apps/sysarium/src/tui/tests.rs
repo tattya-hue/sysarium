@@ -71,7 +71,7 @@ fn p3_export_review_snapshots() {
     std::fs::create_dir_all(&root).unwrap();
     for case in ["a", "b", "c", "d"] {
         let mut app = p3_app(case);
-        app.mode = ViewMode::Split;
+        app.mode = ViewMode::Both;
         for (width, height) in [(140, 34), (100, 24), (80, 24), (40, 24)] {
             if width == 80 {
                 export_svg(
@@ -145,18 +145,18 @@ fn diagnostic_wrapping_keeps_unicode_and_sanitizes_terminal_control_characters()
 }
 
 #[test]
-fn live_defaults_to_split_and_keys_switch_without_resampling() {
+fn live_defaults_to_both_and_keys_switch_without_resampling() {
     let mut app = app();
-    assert_eq!(app.mode, ViewMode::Split);
+    assert_eq!(app.mode, ViewMode::Both);
     let original = app.analysis.clone();
-    for mode in [ViewMode::Living, ViewMode::Metrics, ViewMode::Split] {
+    for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
         assert!(!press(&mut app, KeyCode::Tab));
         assert_eq!(app.mode, mode);
     }
     for (key, mode) in [
-        ('1', ViewMode::Living),
-        ('2', ViewMode::Metrics),
-        ('3', ViewMode::Split),
+        ('1', ViewMode::Computer),
+        ('2', ViewMode::Charts),
+        ('3', ViewMode::Both),
     ] {
         press(&mut app, KeyCode::Char(key));
         assert_eq!(app.mode, mode);
@@ -164,7 +164,7 @@ fn live_defaults_to_split_and_keys_switch_without_resampling() {
     let mut release = KeyEvent::new(KeyCode::Tab, KeyModifiers::NONE);
     release.kind = KeyEventKind::Release;
     app.handle_event(Event::Key(release));
-    assert_eq!(app.mode, ViewMode::Split);
+    assert_eq!(app.mode, ViewMode::Both);
     app.handle_event(Event::Resize(30, 10));
     assert_eq!(app.analysis, original);
     assert!(press(&mut app, KeyCode::Char('q')));
@@ -221,11 +221,11 @@ fn fixture_pipeline_retains_both_axes_and_shared_observation() {
 #[test]
 fn supported_sizes_preserve_primary_values_without_technical_clutter() {
     for (width, height) in [(140, 34), (120, 32), (100, 24), (80, 24)] {
-        for mode in [ViewMode::Living, ViewMode::Metrics, ViewMode::Split] {
+        for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
             let mut app = p3_app("b");
             app.mode = mode;
             let out = render(&app, width, height);
-            for label in ["92.0%", "28.0%", "i 指標の詳細", "q 終了"] {
+            for label in ["92.0%", "28.0%", "i details", "q quit"] {
                 assert!(
                     out.contains(label),
                     "{label}: {width}x{height} {mode:?}\n{out}"
@@ -234,13 +234,13 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
             for clutter in ["sample_id", "/proc/", "EMA", "山", "比喩", "USER_HZ"] {
                 assert!(!out.contains(clutter));
             }
-            if mode != ViewMode::Metrics {
-                assert!(out.contains('◡'), "missing face: {width}x{height}\n{out}");
+            if mode != ViewMode::Charts {
+                assert!(out.contains("╰╯"), "missing face: {width}x{height}\n{out}");
                 assert!(out.contains("│ ──── │") || out.contains("╭──────╮"));
             }
-            if mode != ViewMode::Living {
-                assert!(out.contains("CPU pressure"));
-                assert!(out.contains("avg10"));
+            if mode != ViewMode::Computer {
+                assert!(out.contains("CPU wait"));
+                assert!(out.contains("10s trend"));
                 assert!(out.contains("?")); // first observation remains a history gap
             }
         }
@@ -262,13 +262,7 @@ fn unavailable_has_readable_live_details_and_lossless_json() {
     app.observe(next);
     assert!(render(&app, 80, 24).contains("80.0%"));
     press(&mut app, KeyCode::Char('i'));
-    assert!(
-        app.overlay
-            .as_ref()
-            .unwrap()
-            .text
-            .contains("読み取りエラー")
-    );
+    assert!(app.overlay.as_ref().unwrap().text.contains("Read failed"));
     assert!(
         crate::output::json(&app.analysis)
             .unwrap()
@@ -310,7 +304,7 @@ fn history_is_bounded_and_keeps_zero_distinct_from_missing() {
     assert_eq!(app.history.len(), HISTORY_LIMIT);
     assert_eq!(app.history.front().unwrap().sample_id, 21);
     assert_eq!(app.history.back().unwrap().sample_id, 140);
-    app.mode = ViewMode::Metrics;
+    app.mode = ViewMode::Charts;
     app.history.clear();
     app.history.push_back(super::app::MetricPoint {
         sample_id: 140,
@@ -404,13 +398,13 @@ fn overlay_scroll_resize_help_and_quit_remain_accessible() {
     }
     press(&mut app, KeyCode::Char('?'));
     for term in [
-        "平滑化",
-        "初回",
-        "待機タスク数ではありません",
-        "system-view",
+        "CPU usage",
+        "CPU wait",
+        "not a task count",
+        "Pressure Stall Information",
         "Runnable",
-        "1Hz",
-        "0〜100%",
+        "~1/s",
+        "0–100%",
     ] {
         assert!(app.overlay.as_ref().unwrap().text.contains(term));
     }
@@ -479,7 +473,7 @@ fn export_svg(app: &App, width: u16, height: u16, path: &std::path::Path) {
 }
 
 #[test]
-fn body_and_limbs_are_symmetric_in_both_work_poses() {
+fn face_monitor_stand_and_keyboard_are_symmetric_in_both_work_frames() {
     let reflect = |c| match c {
         '╭' => '╮',
         '╮' => '╭',
@@ -497,10 +491,10 @@ fn body_and_limbs_are_symmetric_in_both_work_poses() {
             .position(|line| line.contains("╭────────────────╮"))
             .unwrap();
         let x = lines[top].chars().position(|c| c == '╭').unwrap() - 3;
-        for line in &lines[top + 8..=top + 16] {
+        for line in &lines[top..=top + 16] {
             let body: Vec<_> = line.chars().skip(x).take(24).collect();
             let mirrored: Vec<_> = body.iter().rev().copied().map(reflect).collect();
-            assert_eq!(body, mirrored, "unbalanced body: {line}");
+            assert_eq!(body, mirrored, "unbalanced computer: {line}");
         }
     }
 }
@@ -526,14 +520,14 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
             .unwrap();
         let out = text(&terminal);
         if width >= 80 && height >= 24 {
-            assert!(out.contains('◡'));
-            assert!(out.contains("╰───╯╰───╯"));
-            assert!(out.contains("Tab 表示切替"));
+            assert!(out.contains("╰╯"));
+            assert!(out.contains("╰──────────────────╯"));
+            assert!(out.contains("Tab view"));
         } else {
-            assert!(!out.contains('◡'));
-            assert!(!out.contains("╰───╯╰───╯"));
+            assert!(!out.contains("╰╯"));
+            assert!(!out.contains("╰──────────────────╯"));
             if width >= 40 && height >= 10 {
-                assert!(out.contains("80列 × 24行以上"));
+                assert!(out.contains("80 x 24"));
                 assert!(out.contains("92.0%"));
                 assert!(out.contains("28.0%"));
             }
@@ -542,6 +536,31 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
     app.resize(40, 24);
     app.observe(p3_observation("d", 3));
     assert_eq!(app.analysis.source_sample_id, 3);
-    assert!(render(&app, 40, 24).contains("CPU pressure N/A"));
+    assert!(render(&app, 40, 24).contains("CPU wait N/A"));
     assert!(press(&mut app, KeyCode::Char('q')));
+}
+
+#[test]
+fn all_views_overlays_and_unavailable_states_use_english_copy() {
+    let no_cjk = |text: &str| {
+        assert!(
+            !text
+                .chars()
+                .any(|c| matches!(c, '\u{3040}'..='\u{30ff}' | '\u{4e00}'..='\u{9fff}')),
+            "non-English UI: {text}"
+        )
+    };
+    for mut app in [App::new(fixture(1)), p3_app("b"), p3_app("d")] {
+        for mode in [ViewMode::Computer, ViewMode::Charts, ViewMode::Both] {
+            app.mode = mode;
+            no_cjk(&render(&app, 80, 24));
+        }
+        no_cjk(&render(&app, 40, 24));
+        for key in ['i', '?'] {
+            app.overlay = None;
+            press(&mut app, KeyCode::Char(key));
+            no_cjk(&app.overlay.as_ref().unwrap().text);
+            no_cjk(&render(&app, 80, 24));
+        }
+    }
 }

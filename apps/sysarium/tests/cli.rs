@@ -16,7 +16,10 @@ fn version_and_all_help_paths_work_without_a_terminal() {
     for args in [vec!["--help"], vec!["live", "--help"]] {
         let result = sysarium().args(args).output().unwrap();
         assert!(result.status.success());
-        assert!(String::from_utf8(result.stdout).unwrap().contains("usage:"));
+        let help = String::from_utf8(result.stdout).unwrap();
+        assert!(help.contains("usage:"));
+        assert!(help.contains("Live CPU monitor."));
+        assert!(help.contains("Tab view"));
         assert!(result.stderr.is_empty());
     }
 }

@@ -68,13 +68,13 @@ Analysis + evidence + availability [Core]
    ↓                  ↓
 Semantic Scene     Metric series
    ↓                  ↓
-Living renderer    Metrics renderer
+Computer renderer    Charts renderer
    └────────┬─────────┘
             ↓
      Unified TUI
 ```
 
-MetricsとLivingは別々にOSをサンプリングしない．同じ解析結果，観測時刻，履歴を使う．Sceneはレンダラー固有の座標・ASCII文字・色・画像パスを持たない．
+ChartsとComputerは別々にOSをサンプリングしない．同じ解析結果，観測時刻，履歴を使う．Sceneはレンダラー固有の座標・ASCII文字・色・画像パスを持たない．
 
 ## データ契約（概念．Rustの確定型定義ではない）
 
@@ -109,7 +109,7 @@ MetricsとLivingは別々にOSをサンプリングしない．同じ解析結�
 
 ### View state（UI側）
 
-- `view_mode`：Living / Metrics / Split．
+- `view_mode`：Computer / Charts / Both．
 - `selected_resource`：初期はCPUのみ．
 - `selected_sample_id`：将来の時点選択向け．初期は最新サンプル固定でよい．
 - `metric_history`：短いメモリ上のリングバッファ（初期上限120サンプル）．
@@ -130,7 +130,7 @@ CPU PSI `some`の`total`は累積μs． `Δtotal_us / Δelapsed_us` は直近区
 
 ## Sceneへの初期マッピング
 
-- キャラクターの活動：`cpu_active_ratio`を表示用に平滑化する．実測・解析値自体は改変しない．
+- キーボードの動き：`cpu_active_ratio`を表示用に平滑化する．実測・解析値自体は改変しない．
 - 仕事の山：`cpu_psi_some_interval_ratio`から0〜5段階に量子化する．しきい値は説明可能な暫定ルールとし，実測検証後に変更できるよう1か所で定義する．初回・欠測時は `?` などの不明表示にする．
 - 例示の暫定しきい値（比喩の段階であり，問題判定の臨床的・運用上の基準ではない）：`<0.5%:0`，`0.5〜<2%:1`，`2〜<5%:2`，`5〜<10%:3`，`10〜<25%:4`，`>=25%:5`．
 - チラつきを避けるため，Scene側にのみ簡単な平滑化またはヒステリシスを適用できる．MVPでは無理に複雑な状態機械を作らない．
@@ -139,7 +139,7 @@ CPU PSI `some`の`total`は累積μs． `Δtotal_us / Δelapsed_us` は直近区
 
 - 観測：原則1 Hz．
 - 描画：最大10 FPSを初期目安とし，アニメーションとサンプリングを分離．
-- `sysarium`／`sysarium live`：約1Hzで継続観測し，最新解析と短期履歴で3表示を切り替える．初期表示はSplit．
+- `sysarium`／`sysarium live`：約1Hzで継続観測し，最新解析と短期履歴で3表示を切り替える．初期表示はBoth．
 - `sysarium --json`：同じ取得・解析経路の結果を約1Hzで1行1JSONとしてflushする．初回も理由付きで出力する．
 - 単発のstatus／inspectは提供しない．取得元・単位・計算式・欠測理由はライブの詳細へ集約する．
 - エラー発生時：画面を落とすのではなく計測不能を示す．致命的な端末エラーでは終了処理で端末状態を復旧する．
@@ -150,7 +150,7 @@ Agent・IPC・GUI・記録再生・Simulationは**現段階で実装しない**�
 
 ## v0.1の詳細表示と終了処理
 
-通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．詳細はCPU・pressure・Runnable・観測・計算方法をまとめた人向けの説明とし，生のJSONと内部型は表示しない．完全な観測値・原因はNDJSONに保持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
+通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．詳細はCPU usage（working）とCPU wait（waiting）の値に短い定義を添え，PSIとWindowの意味も簡潔に示す．計算式・生JSON・内部型はNDJSONへ集約する．完全な観測値・原因はNDJSONに保持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
 
 Unixの終了シグナルはアプリ側のフラグへ通知し，イベントループを終了して通常の端末復旧へ進む．signal-hookはapps/sysariumのみの依存とし，Core・Linux Collectorへ持ち込まない．シグナルハンドラ内で端末I/Oや解析は行わない．
 
@@ -158,4 +158,4 @@ Unixの終了シグナルはアプリ側のフラグへ通知し，イベント�
 
 製品・アプリcrate・実行ファイルはsysarium，内部ライブラリは既存のinside-core／inside-linuxを維持する．アプリはapps/sysariumへ配置する．
 
-通常画面の最小サイズは80列×24行．Rendererはロボットに固定39×18セルの描画領域を使い，全身を配置する．それ未満の端末はサイズ案内とライブ主要値へ切り替え，観測・キー入力を継続する．端末ウィンドウ自体のリサイズを制限する操作はしない．大きさが戻れば通常描画を再開する．
+通常画面の最小サイズは80列×24行．RendererはPCキャラクターに固定39×18セルの描画領域を使い，全身を配置する．それ未満の端末はサイズ案内とライブ主要値へ切り替え，観測・キー入力を継続する．端末ウィンドウ自体のリサイズを制限する操作はしない．大きさが戻れば通常描画を再開する．

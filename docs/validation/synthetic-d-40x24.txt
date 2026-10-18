@@ -7,11 +7,11 @@
 
                 sysarium
 
-          表示領域が足りません
-        80列 × 24行以上が必要です
-            現在 40列 × 24行
+            More room needed
+       Resize to 80 x 24 or larger
+            Current: 40 x 24
 
-                CPU 85.0%
-            CPU pressure N/A
+             CPU usage 85.0%
+              CPU wait N/A
 
-            q 終了 · ? ヘルプ
+             q quit · ? help

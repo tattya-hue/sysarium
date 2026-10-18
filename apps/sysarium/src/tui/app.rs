@@ -12,24 +12,24 @@ pub const HISTORY_LIMIT: usize = 120;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ViewMode {
-    Living,
-    Metrics,
-    Split,
+    Computer,
+    Charts,
+    Both,
 }
 
 impl ViewMode {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Living => "Living",
-            Self::Metrics => "Metrics",
-            Self::Split => "Split",
+            Self::Computer => "Computer",
+            Self::Charts => "Charts",
+            Self::Both => "Both",
         }
     }
     fn next(self) -> Self {
         match self {
-            Self::Living => Self::Metrics,
-            Self::Metrics => Self::Split,
-            Self::Split => Self::Living,
+            Self::Computer => Self::Charts,
+            Self::Charts => Self::Both,
+            Self::Both => Self::Computer,
         }
     }
 }
@@ -110,7 +110,7 @@ impl App {
         let analysis = analyze(None, &observation);
         let scene = Scene::from_analysis(&analysis, None);
         let mut app = Self {
-            mode: ViewMode::Split,
+            mode: ViewMode::Both,
             analysis,
             scene,
             history: VecDeque::new(),
@@ -161,7 +161,7 @@ impl App {
     fn details(&self) -> Overlay {
         Overlay {
             kind: OverlayKind::Details,
-            title: format!("指標の詳細 · LIVE · #{}", self.analysis.source_sample_id),
+            title: format!("Details · LIVE · #{}", self.analysis.source_sample_id),
             text: crate::output::details(&self.analysis),
             scroll: 0,
         }
@@ -169,12 +169,12 @@ impl App {
 
     fn help() -> Overlay {
         let text = format!(
-            "Sysarium {}\n\nTab: 表示切替（Living → Metrics → Split）\n1・2・3: 各表示を直接選択\ni: ライブ詳細   ?: ヘルプ   Esc: 閉じる\n↑↓ / PgUp / PgDn / Home: 詳細をスクロール\nq / Ctrl-C: 終了\n\nCPU: CPU活動時間の割合（本プロジェクトの近似値）．\nキャラクターの手の動きは活動量に応じて変化します．\n表示用の平滑化を行い，数値自体は変更しません．\n\nCPU pressure: PSI someの区間割合．CPUを待つタスクが少なくとも1つある時間の割合です．\n積まれた書類は競合の強さの比喩で，待機タスク数ではありません．\n段階の境界: 0.5 / 2 / 5 / 10 / 25%（暫定）．\navg10: カーネルの平滑化された傾向．区間値とは異なります．\nRunnable: 実行中も含む参考値．待機数ではありません．\n\nN/A・?: 不明．初回は差分がなく，約1秒後から表示します．\n履歴: 左が過去，右が最新．最大120観測，縦軸0〜100%．\n▁は計測できたゼロ，?は欠測です．\n\n観測は約1Hz，描画は最大10FPS．詳細もライブ更新します．\n通常画面は80列×24行以上．小さい端末ではサイズ案内を表示します．\niで取得元・単位・計算方法・欠測理由を確認できます．\nsystem-view: 可視の/procの範囲で，物理ホスト全体とは限りません．",
+            "Sysarium {}\n\nTab        Switch view: Computer / Charts / Both\n1 / 2 / 3  Select view\ni          Details\n?          Help\nEsc        Back\n↑↓ / PgUp / PgDn / Home  Scroll\nq / Ctrl-C Quit\n\nCPU usage  Working: CPU time doing work (approx.).\nCPU wait   Waiting: time with any task waiting for CPU.\nUsage and wait can both be high.\nPSI        Pressure Stall Information; measures contention.\n10s trend  Smoothed CPU wait over ~10 seconds.\nRunnable   Running + ready tasks; not a waiting count.\n\nKeyboard activity follows CPU usage.\nPapers reflect CPU wait; not a task count.\nN/A or ? = unknown. First reading needs ~1s.\nCharts: past → now, 0–100%, up to 120 readings.\n▁ = zero / near zero; ? = missing.\n\n80 x 24 minimum. Updates ~1/s; animation up to 10 FPS.\nRaw data and formulas: sysarium --json",
             env!("CARGO_PKG_VERSION")
         );
         Overlay {
             kind: OverlayKind::Help,
-            title: "Help | 操作・指標".into(),
+            title: "Help".into(),
             text,
             scroll: 0,
         }
@@ -240,9 +240,9 @@ impl App {
                 KeyCode::Tab if self.overlay.is_none() => self.mode = self.mode.next(),
                 KeyCode::Char('1' | '2' | '3') if self.overlay.is_none() => {
                     self.mode = match key.code {
-                        KeyCode::Char('1') => ViewMode::Living,
-                        KeyCode::Char('2') => ViewMode::Metrics,
-                        _ => ViewMode::Split,
+                        KeyCode::Char('1') => ViewMode::Computer,
+                        KeyCode::Char('2') => ViewMode::Charts,
+                        _ => ViewMode::Both,
                     };
                 }
                 _ => {}

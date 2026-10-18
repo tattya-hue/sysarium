@@ -132,8 +132,8 @@ fn first_sample_output_does_not_claim_zero_activity() {
     );
     assert!(value["metrics"]["cpu_active_ratio"]["value"].is_null());
     let text = output::details(&analysis);
-    assert!(text.contains("活動量    N/A"));
-    assert!(text.contains("区間      N/A"));
+    assert!(text.contains("CPU usage    N/A"));
+    assert!(text.contains("CPU wait     N/A"));
 }
 
 #[test]
@@ -142,26 +142,29 @@ fn live_details_explain_values_units_and_inputs() {
     assert!(inspect.contains("80.0%"));
     assert!(inspect.contains("25.0%"));
     assert!(inspect.contains("2.5%"));
-    assert!(inspect.contains("実行中を含む"));
+    assert!(inspect.contains("Running + ready tasks"));
     for detail in [
-        "USER_HZ",
-        "μs",
-        "単調時計",
-        "guest",
-        "iowait",
-        "steal",
-        "原子的",
+        "CPU usage",
+        "CPU wait",
+        "PSI = Pressure Stall Information",
+        "Time with any task waiting for CPU",
+        "Window",
+        "Time between the last two readings",
         "/proc/pressure/cpu",
     ] {
         assert!(inspect.contains(detail), "missing {detail}");
     }
+    for jargon in ["USER_HZ", "guest", "active_ticks", "total_ticks", "delta("] {
+        assert!(!inspect.contains(jargon));
+    }
+    assert!(inspect.lines().count() <= 20);
     let text = render(true, |o| {
         if o.sample_id == 2 {
             o.readings.procs_running.value = Err(Reason::PermissionDenied);
         }
     });
     assert!(text.contains("N/A"));
-    assert!(text.contains("読む権限がありません"));
+    assert!(text.contains("Permission denied"));
     assert!(!text.contains("permission_denied"));
     for raw in ["source_sample_id", "total_us", "\"value\"", "Ok(", "Err("] {
         assert!(!text.contains(raw));

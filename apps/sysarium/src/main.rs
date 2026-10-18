@@ -62,7 +62,7 @@ fn run(command: Command, out: &mut impl Write) -> io::Result<()> {
         Command::Version => writeln!(out, "sysarium {}", env!("CARGO_PKG_VERSION")),
         Command::Help => writeln!(
             out,
-            "usage: sysarium [live] [--json]\n\n引数なしでライブ監視を開始します．\nTab / 1・2・3: 表示切替  i: ライブ詳細  ?: ヘルプ  q: 終了\n--json: 約1秒ごとのNDJSONストリーム（Ctrl-Cで終了）．\n対象: Linuxのsystem-view．TUIはstdin/stdoutに端末が必要です．"
+            "usage: sysarium [live] [--json]\n\nLive CPU monitor. Start without arguments.\nTab view · i details · ? help · q quit\n--json: stream one JSON record per second; Ctrl-C to stop.\nLinux /proc scope. TUI requires a terminal, 80 x 24 or larger."
         ),
         Command::Live => tui::run(),
         Command::Json => {

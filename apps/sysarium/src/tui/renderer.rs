@@ -34,7 +34,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             .min(overlay.max_scroll(area.width, area.height));
         let border = Block::bordered()
             .title(format!(" {} ", overlay.title))
-            .title_bottom(" ↑↓ スクロール · Esc 戻る · q 終了 ")
+            .title_bottom(" ↑↓ scroll · Esc back · q quit ")
             .border_style(Style::default().fg(LINE));
         let inner = border.inner(area);
         frame.render_widget(Clear, area);
@@ -43,20 +43,14 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             .wrapped_lines(inner.width)
             .into_iter()
             .map(|text| {
-                let color = match text.as_str() {
-                    "CPU" => MINT,
-                    "CPU pressure" => AMBER,
-                    _ => INK,
+                let color = if text.starts_with("CPU usage ") {
+                    MINT
+                } else if text.starts_with("CPU wait ") {
+                    AMBER
+                } else {
+                    INK
                 };
-                let heading = [
-                    "CPU",
-                    "CPU pressure",
-                    "Runnable",
-                    "観測",
-                    "計算と取得元",
-                    "読み方",
-                ]
-                .contains(&text.as_str());
+                let heading = text.starts_with("CPU usage ") || text.starts_with("CPU wait ");
                 Line::styled(
                     text,
                     Style::default().fg(color).add_modifier(if heading {
@@ -99,7 +93,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
         ])),
         header[0],
     );
-    let tabs: Vec<Span> = [ViewMode::Living, ViewMode::Metrics, ViewMode::Split]
+    let mut tabs: Vec<Span> = [ViewMode::Computer, ViewMode::Charts, ViewMode::Both]
         .into_iter()
         .flat_map(|mode| {
             [
@@ -117,17 +111,18 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             ]
         })
         .collect();
+    tabs.insert(0, Span::styled("View: ", Style::default().fg(MUTED)));
     frame.render_widget(
         Paragraph::new(Line::from(tabs)).alignment(Alignment::Right),
         header[1],
     );
     match app.mode {
-        ViewMode::Living => {
+        ViewMode::Computer => {
             let pieces =
                 Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
             let badges = format!(
-                "CPU {}     Pressure {}",
+                "CPU usage {}     CPU wait {}",
                 value(&app.analysis.cpu_active_ratio, 100.0),
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             );
@@ -138,14 +133,14 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
                 pieces[1],
             );
         }
-        ViewMode::Metrics => metrics(frame, rows[1], app),
-        ViewMode::Split => {
+        ViewMode::Charts => metrics(frame, rows[1], app),
+        ViewMode::Both => {
             let (left, right) = split_areas(rows[1]);
             living(frame, left, app, elapsed);
             metrics(frame, right, app);
         }
     }
-    let footer = "Tab 表示切替  ·  i 指標の詳細  ·  ? ヘルプ  ·  q 終了";
+    let footer = "Tab view  ·  i details  ·  ? help  ·  q quit";
     frame.render_widget(
         Paragraph::new(footer).style(Style::default().fg(MUTED)),
         rows[2],
@@ -211,14 +206,14 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
     );
     frame.render_widget(
         Block::default().style(Style::default().bg(CARD)),
-        Rect::new(stage.x + 7, stage.y + 10, 10, 3),
+        Rect::new(stage.x + 3, stage.y + 14, 18, 2),
     );
     let head = [
         "   ╭────────────────╮".to_owned(),
         "   │ ╭────────────╮ │".into(),
         "   │ │            │ │".into(),
         format!("   │ │   {eyes}   │ │"),
-        "   │ │     ◡      │ │".into(),
+        "   │ │     ╰╯     │ │".into(),
         "   │ │            │ │".into(),
         "   │ ╰────────────╯ │".into(),
         "   ╰────────────────╯".into(),
@@ -227,30 +222,28 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         put(frame, stage, 0, y as u16, line, MINT);
     }
     put(frame, stage, 9, 3, eyes, FACE);
-    put(frame, stage, 11, 4, "◡", FACE);
+    put(frame, stage, 11, 4, "╰╯", FACE);
     put(frame, stage, 8, 4, "·", CHEEK);
     put(frame, stage, 15, 4, "·", CHEEK);
     put(frame, stage, 10, 8, "│  │", MINT);
-    put(frame, stage, 6, 9, "╭───┴──┴───╮", MINT);
-    for y in 10..=12 {
-        put(frame, stage, 6, y, "│          │", MINT);
-    }
-    put(frame, stage, 3, 10, "╭──┤", MINT);
-    put(frame, stage, 17, 10, "├──╮", MINT);
-    if phase {
-        put(frame, stage, 3, 11, "╰─○", MINT);
-        put(frame, stage, 18, 11, "○─╯", MINT);
-    } else {
-        put(frame, stage, 3, 11, "│", MINT);
-        put(frame, stage, 20, 11, "│", MINT);
-        put(frame, stage, 3, 12, "╰─○", MINT);
-        put(frame, stage, 18, 12, "○─╯", MINT);
-    }
-    put(frame, stage, 11, 11, "●●", FACE);
-    put(frame, stage, 6, 13, "╰──────────╯", MINT);
-    put(frame, stage, 8, 14, "│ │  │ │", MINT);
-    put(frame, stage, 7, 15, "╭┴─┴╮╭┴─┴╮", MINT);
-    put(frame, stage, 7, 16, "╰───╯╰───╯", MINT);
+    put(frame, stage, 10, 9, "│  │", MINT);
+    put(frame, stage, 7, 10, "╭──┴──┴──╮", MINT);
+    put(frame, stage, 7, 11, "╰────────╯", MINT);
+    put(frame, stage, 2, 13, "╭──────────────────╮", MINT);
+    put(
+        frame,
+        stage,
+        2,
+        14,
+        if phase {
+            "│ ▪ ▫ ▪ ▫  ▫ ▪ ▫ ▪ │"
+        } else {
+            "│ ▫ ▪ ▫ ▪  ▪ ▫ ▪ ▫ │"
+        },
+        MINT,
+    );
+    put(frame, stage, 2, 15, "│    ──────────    │", MINT);
+    put(frame, stage, 2, 16, "╰──────────────────╯", MINT);
     papers(frame, stage, 30, 16, &app.scene.task_stack.pressure_level);
     put(
         frame,
@@ -261,7 +254,7 @@ fn living(frame: &mut Frame, area: Rect, app: &App, elapsed: Duration) {
         LINE,
     );
     if intensity.is_err() {
-        put(frame, area, 0, 0, "CPU N/A", AMBER);
+        put(frame, area, 0, 0, "CPU usage N/A", AMBER);
     }
 }
 
@@ -303,23 +296,26 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
     card(
         frame,
         cards[0],
-        "CPU",
+        "CPU usage",
         &app.analysis.cpu_active_ratio,
         app.history.iter().map(|p| p.activity).collect(),
         MINT,
-        None,
+        &["Working".into()],
     );
     card(
         frame,
         cards[1],
-        "CPU pressure",
+        "CPU wait",
         &app.analysis.cpu_psi_some_interval_ratio,
         app.history.iter().map(|p| p.pressure).collect(),
         AMBER,
-        Some(format!(
-            "avg10 {}",
-            value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
-        )),
+        &[
+            "Waiting for CPU".into(),
+            format!(
+                "10s trend {}",
+                value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
+            ),
+        ],
     );
     let runnable = app
         .analysis
@@ -344,7 +340,7 @@ fn card(
     metric: &Result<f64, Reason>,
     history: Vec<Option<f64>>,
     color: Color,
-    note: Option<String>,
+    notes: &[String],
 ) {
     if area.is_empty() {
         return;
@@ -369,11 +365,11 @@ fn card(
         Rect::new(inner.x, inner.y, inner.width, inner.height.min(1)),
     );
     if inner.height >= 2 {
-        let gap = u16::from(note.is_some() || inner.height >= 5);
-        if let Some(note) = note {
+        let gap = (notes.len() as u16).min(inner.height.saturating_sub(1));
+        for (row, note) in notes.iter().take(usize::from(gap)).enumerate() {
             frame.render_widget(
-                Paragraph::new(note).style(Style::default().fg(MUTED)),
-                Rect::new(inner.x, inner.y + 1, inner.width, 1),
+                Paragraph::new(note.as_str()).style(Style::default().fg(MUTED)),
+                Rect::new(inner.x, inner.y + 1 + row as u16, inner.width, 1),
             );
         }
         let graph = Rect::new(
@@ -426,10 +422,10 @@ fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {
             Style::default().fg(MINT).add_modifier(Modifier::BOLD),
         ),
         Line::raw(""),
-        Line::raw("表示領域が足りません"),
-        Line::raw("80列 × 24行以上が必要です"),
+        Line::raw("More room needed"),
+        Line::raw("Resize to 80 x 24 or larger"),
         Line::styled(
-            format!("現在 {}列 × {}行", area.width, area.height),
+            format!("Current: {} x {}", area.width, area.height),
             Style::default().fg(MUTED),
         ),
     ];
@@ -437,21 +433,18 @@ fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {
         lines.extend([
             Line::raw(""),
             Line::raw(format!(
-                "CPU {}",
+                "CPU usage {}",
                 value(&app.analysis.cpu_active_ratio, 100.0)
             )),
             Line::raw(format!(
-                "CPU pressure {}",
+                "CPU wait {}",
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             )),
         ]);
     }
     if area.width >= 20 && area.height >= 7 {
         lines.push(Line::raw(""));
-        lines.push(Line::styled(
-            "q 終了 · ? ヘルプ",
-            Style::default().fg(MUTED),
-        ));
+        lines.push(Line::styled("q quit · ? help", Style::default().fg(MUTED)));
     }
     let height = (lines.len() as u16).min(area.height);
     let rect = Rect::new(

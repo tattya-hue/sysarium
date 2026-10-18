@@ -107,3 +107,7 @@ git status --porcelain
 ## Sysariumへの改称後
 
 現行アプリはapps/sysarium，crate・実行ファイルはsysarium．新しい起動は`cargo run --release -p sysarium`，インストールは`cargo install --path apps/sysarium --locked`．旧候補のinsideと書かれた記録・アーカイブは当時の名称・旧表示を指し，現行候補とは区別する．ロボット全身表示は80×24以上を必要とし，小さい端末では案内とライブ主要値を表示する．
+
+## 現行UI（英語化）
+
+通常のPC表示とView: Computer / Charts / Bothへ変更した．CPU usage / WorkingとCPU wait / Waiting for CPUを対にし，詳細は短い定義とPSI・Windowの意味だけを残す．計算式と完全な根拠はNDJSONへ集約する．現行の通常テストは51件．旧ロボットやSplitの記録は以前の改訂を指す．

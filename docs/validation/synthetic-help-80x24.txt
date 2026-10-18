@@ -1,24 +1,24 @@
-┌ Help | 操作・指標 ───────────────────────────────────────────────────────────┐
+┌ Help ────────────────────────────────────────────────────────────────────────┐
 │Sysarium 0.1.0                                                                │
 │                                                                              │
-│Tab: 表示切替（Living → Metrics → Split）                                     │
-│1・2・3: 各表示を直接選択                                                     │
-│i: ライブ詳細   ?: ヘルプ   Esc: 閉じる                                       │
-│↑↓ / PgUp / PgDn / Home: 詳細をスクロール                                     │
-│q / Ctrl-C: 終了                                                              │
+│Tab        Switch view: Computer / Charts / Both                              │
+│1 / 2 / 3  Select view                                                        │
+│i          Details                                                            │
+│?          Help                                                               │
+│Esc        Back                                                               │
+│↑↓ / PgUp / PgDn / Home  Scroll                                               │
+│q / Ctrl-C Quit                                                               │
 │                                                                              │
-│CPU: CPU活動時間の割合（本プロジェクトの近似値）．                            │
-│キャラクターの手の動きは活動量に応じて変化します．                            │
-│表示用の平滑化を行い，数値自体は変更しません．                                │
+│CPU usage  Working: CPU time doing work (approx.).                            │
+│CPU wait   Waiting: time with any task waiting for CPU.                       │
+│Usage and wait can both be high.                                              │
+│PSI        Pressure Stall Information; measures contention.                   │
+│10s trend  Smoothed CPU wait over ~10 seconds.                                │
+│Runnable   Running + ready tasks; not a waiting count.                        │
 │                                                                              │
-│CPU pressure: PSI someの区間割合．CPUを待つタスクが少なくとも1つある時間の割合│
-│です．                                                                        │
-│積まれた書類は競合の強さの比喩で，待機タスク数ではありません．                │
-│段階の境界: 0.5 / 2 / 5 / 10 / 25%（暫定）．                                  │
-│avg10: カーネルの平滑化された傾向．区間値とは異なります．                     │
-│Runnable: 実行中も含む参考値．待機数ではありません．                          │
-│                                                                              │
-│N/A・?: 不明．初回は差分がなく，約1秒後から表示します．                       │
-│履歴: 左が過去，右が最新．最大120観測，縦軸0〜100%．                          │
-│▁は計測できたゼロ，?は欠測です．                                              │
-└ ↑↓ スクロール · Esc 戻る · q 終了 ───────────────────────────────────────────┘
+│Keyboard activity follows CPU usage.                                          │
+│Papers reflect CPU wait; not a task count.                                    │
+│N/A or ? = unknown. First reading needs ~1s.                                  │
+│Charts: past → now, 0–100%, up to 120 readings.                               │
+│▁ = zero / near zero; ? = missing.                                            │
+└ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘

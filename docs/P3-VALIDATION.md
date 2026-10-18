@@ -94,9 +94,9 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 | 検証 | 結果 |
 |---|---|
 | `cargo fmt --all -- --check` | 成功 |
-| `cargo test --workspace` | 50件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
+| `cargo test --workspace` | 51件成功．PTY専用2件と画面書出し1件は通常実行ではignore |
 | `cargo clippy --workspace --all-targets -- -D warnings` | 成功 |
-| `cargo +1.88.0 test --workspace --locked` | 50件成功（MSRV） |
+| `cargo +1.88.0 test --workspace --locked` | 51件成功（MSRV） |
 | `cargo build --release --locked -p sysarium` | 成功．release版のversion・継続NDJSON・初回欠測・SIGTERM終了も確認 |
 | 明示的な画面書出しテスト | 成功．A〜D×4サイズの16画面と詳細・ヘルプの3画面を保存 |
 | 実PTYのlive | Tab，詳細・ヘルプ・スクロール，140×34→40×24→80×24，q終了，端末属性・画面・カーソル復旧を確認 |
@@ -129,3 +129,11 @@ timeout --signal=TERM --kill-after=2s 20s taskset -c 0,1 stress-ng --cpu 8 --cpu
 - 通常画面のavg10をpressure内へ移し，Runnableと分離．Tab操作は「表示切替」と明記する．
 
 テストによる構造の確認に加え，色付き合成画面で全身・余白・数値の配置を見直す．実際の利用者による改善後の評価と，端末フォント差・制限VMでの手動負荷比較は引き続き未実施．
+
+## 英語UI・PCデザインの改訂
+
+ロボットを通常のモニター・スタンド・キーボードへ変更した．以前の対称性テストは胴体だけだったため，顔・頬・2セルの口・スタンド・キーボードまで両フレームで検証する．CPU usageに応じてキーの表示が動き，0と欠測では動かない．
+
+UI・ヘルプ・理由を英語に統一し，全表示・欠測・初回・小画面・オーバーレイで日本語の表示文言が残らないことを検証する．通常の詳細は20行以内で，数値・定義・PSI・Window・取得元を示し，guest等の計算注記や差分カウンタを出さない．根拠と原因の全文はNDJSONに保持する．
+
+画面の名称はView: Computer / Charts / Both．CPU usage / WorkingとCPU wait / Waiting for CPUの2軸を対応させる．計算式・暫定しきい値・観測スコープは変更しない．以下の過去の表示・名称に関する記録より，この改訂と再生成した合成画面を優先する．実端末フォント差と利用者の理解度評価は引き続き確認が必要．

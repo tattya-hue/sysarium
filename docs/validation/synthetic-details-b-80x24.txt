@@ -1,24 +1,24 @@
-┌ 指標の詳細 · LIVE · #2 ──────────────────────────────────────────────────────┐
-│CPU                                                                           │
-│  活動量    92.0%                                                             │
-│  CPUが仕事をしていた時間の割合（近似）．                                     │
+┌ Details · LIVE · #2 ─────────────────────────────────────────────────────────┐
+│CPU usage    92.0%                                                            │
+│  CPU time doing work (approx.).                                              │
 │                                                                              │
-│CPU pressure                                                                  │
-│  区間      28.0%                                                             │
-│  CPUを待つタスクがある時間の割合．                                           │
-│  avg10     28.0%  （平滑化された傾向）                                       │
+│CPU wait     28.0%                                                            │
+│  Time with any task waiting for CPU.                                         │
+│  PSI = Pressure Stall Information.                                           │
+│  Usage and wait can both be high.                                            │
+│  10s trend  28.0%  (smoothed wait)                                           │
 │                                                                              │
-│Runnable                                                                      │
-│  2 タスク  （実行中を含む．待機数ではない）                                  │
+│Runnable     2                                                                │
+│  Running + ready tasks.                                                      │
 │                                                                              │
-│観測                                                                          │
-│  区間 1.000 s · 単調時計 · 約1秒ごとに更新                                   │
-│  対象 system-view · 可視の/procの範囲                                        │
+│Window       1.000 s · Time between the last two readings.                    │
+│Sources      /proc/stat · /proc/pressure/cpu                                  │
+│Raw data     sysarium --json                                                  │
 │                                                                              │
-│計算と取得元                                                                  │
-│  CPU: 活動差分 920 / 総差分 1000 ticks（USER_HZ）                            │
-│  活動: user + nice + system + irq + softirq                                  │
-│  総時間: 活動 + idle + iowait + steal                                        │
-│  guestは重複加算しない．取得元 /proc/stat                                    │
-│  PSI: 停滞差分 280000 μs / 経過 1000000.000 μs                               │
-└ ↑↓ スクロール · Esc 戻る · q 終了 ───────────────────────────────────────────┘
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└ ↑↓ scroll · Esc back · q quit ───────────────────────────────────────────────┘

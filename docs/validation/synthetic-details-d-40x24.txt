@@ -1,24 +1,24 @@
-┌ 指標の詳細 · LIVE · #2 ──────────────┐
-│CPU                                   │
-│  活動量    85.0%                     │
-│  CPUが仕事をしていた時間の割合（近似 │
-│）．                                  │
+┌ Details · LIVE · #2 ─────────────────┐
+│CPU usage    85.0%                    │
+│  CPU time doing work (approx.).      │
 │                                      │
-│CPU pressure                          │
-│  区間      N/A                       │
-│  CPUを待つタスクがある時間の割合．   │
-│  観測 #2: 計測ファイルがありません（ │
-│未対応の可能性）                      │
-│  avg10     N/A  （平滑化された傾向） │
+│CPU wait     N/A                      │
+│  Time with any task waiting for CPU. │
+│  PSI = Pressure Stall Information.   │
+│  Usage and wait can both be high.    │
+│  10s trend  N/A  (smoothed wait)     │
+│  Sample #2: Source missing; this metr│
+│ic may be unsupported.                │
 │                                      │
-│Runnable                              │
-│  2 タスク  （実行中を含む．待機数では│
-│ない）                                │
+│Runnable     2                        │
+│  Running + ready tasks.              │
 │                                      │
-│観測                                  │
-│  区間 1.000 s · 単調時計 · 約1秒ごと │
-│に更新                                │
-│  対象 system-view · 可視の/procの範囲│
+│Window       1.000 s · Time between th│
+│e last two readings.                  │
+│Sources      /proc/stat · /proc/pressu│
+│re/cpu                                │
+│Raw data     sysarium --json          │
 │                                      │
-│計算と取得元                          │
-└ ↑↓ スクロール · Esc 戻る · q 終了 ───┘
+│                                      │
+│                                      │
+└ ↑↓ scroll · Esc back · q quit ───────┘
