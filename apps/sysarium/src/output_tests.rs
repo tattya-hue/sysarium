@@ -133,7 +133,7 @@ fn first_sample_output_does_not_claim_zero_activity() {
     assert!(value["metrics"]["cpu_active_ratio"]["value"].is_null());
     let text = output::details(&analysis);
     assert!(text.contains("CPU usage    N/A"));
-    assert!(text.contains("CPU pressure N/A"));
+    assert!(text.contains("CPU competition N/A"));
 }
 
 #[test]
@@ -145,7 +145,7 @@ fn live_details_explain_values_units_and_inputs() {
     assert!(inspect.contains("Running + ready to run"));
     for detail in [
         "CPU usage",
-        "CPU pressure",
+        "CPU competition",
         "CPU-weighted %, not per-task waits.",
         "PSI some: competition for CPU.",
         "Updated      Every 1.000 s",
@@ -218,14 +218,14 @@ fn pressure_ratio_uses_the_observed_window_and_never_fills_missing_with_zero() {
             o.elapsed_since_previous = Some(Duration::from_millis(500));
         }
     });
-    assert!(text.contains("CPU pressure 50.0%"));
+    assert!(text.contains("CPU competition 50.0%"));
     assert!(text.contains("CPU-weighted %, not per-task waits."));
     assert!(!text.contains("Wait time") && !text.contains(" ms"));
     let baseline = fixture(1).readings.cpu_psi_some.value.unwrap().total_us;
     let zero = render(true, |o| {
         o.readings.cpu_psi_some.value.as_mut().unwrap().total_us = baseline
     });
-    assert!(zero.contains("CPU pressure 0.0%"));
+    assert!(zero.contains("CPU competition 0.0%"));
     let first = output::details(&analyze(None, &fixture(1)));
     assert!(!first.contains("Wait time"));
     for cause in [Reason::NotFound, Reason::PermissionDenied] {
@@ -234,7 +234,7 @@ fn pressure_ratio_uses_the_observed_window_and_never_fills_missing_with_zero() {
                 o.readings.cpu_psi_some.value = Err(cause.clone());
             }
         });
-        assert!(missing.contains("CPU pressure N/A"));
+        assert!(missing.contains("CPU competition N/A"));
         assert!(!missing.contains("Wait time"));
     }
     let invalid = render(true, |o| {
@@ -242,6 +242,6 @@ fn pressure_ratio_uses_the_observed_window_and_never_fills_missing_with_zero() {
             o.readings.cpu_psi_some.value.as_mut().unwrap().total_us = baseline + 2_000_000;
         }
     });
-    assert!(invalid.contains("CPU pressure N/A"));
+    assert!(invalid.contains("CPU competition N/A"));
     assert!(!invalid.contains("Wait time"));
 }

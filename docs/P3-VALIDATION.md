@@ -197,3 +197,7 @@ fixtureで3表示の初回チャートに?やゼロの棒がないこと，正�
 CPU wait / Waiting for CPUをCPU pressure / Competitionへ変更し，10s trendは10s avgへ短縮した．詳細はPSI someのCPU競合，CPU別に重み付けした割合であることを短く示し，Wait timeのms表示を除く．D27・D33当時の「どれかのタスクが待った時間」という説明はCPU別の集約を省いており，この改訂で訂正する．計算・欠測・JSONの数値とキーは維持する．
 
 既存fixtureで500ms区間の50%，計測できた0%，初回，欠測，範囲外と短い詳細を検証．通常テスト59件，fmt，Clippy，Rust 1.88，実PTYでの操作・復旧を確認．通常画面の補足・ヘルプ・詳細は旧版より短く，80×24で現在値とラベルを表示できることを確認した．READMEの4状態・合成画面を再生成．高負荷ワークロードは起動していない．
+
+## CPU competitionの見出し
+
+見出しをCPU competitionへ統一し，重複したCompetitionの行を削除した．80×24以上の各表示，小画面，詳細・ヘルプとREADME画像を更新．通常テスト59件，fmt，Clippy，実PTYでの終了・復旧を確認した．数値・依存方向への変更はない．

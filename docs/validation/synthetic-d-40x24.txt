@@ -12,6 +12,6 @@
             Current: 40 x 24
 
              CPU usage 85.0%
-            CPU pressure N/A
+           CPU competition N/A
 
              q quit · ? help

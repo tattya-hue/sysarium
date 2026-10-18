@@ -2,7 +2,7 @@
 │CPU usage    92.0%                                                            │
 │  CPU time doing work (approx.).                                              │
 │                                                                              │
-│CPU pressure 28.0%                                                            │
+│CPU competition 28.0%                                                         │
 │  PSI some: competition for CPU.                                              │
 │  CPU-weighted %, not per-task waits.                                         │
 │  10s avg   28.0%                                                             │

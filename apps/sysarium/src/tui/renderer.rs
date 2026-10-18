@@ -47,12 +47,13 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
             .map(|text| {
                 let color = if text.starts_with("CPU usage ") {
                     MINT
-                } else if text.starts_with("CPU pressure ") {
+                } else if text.starts_with("CPU competition ") {
                     AMBER
                 } else {
                     INK
                 };
-                let heading = text.starts_with("CPU usage ") || text.starts_with("CPU pressure ");
+                let heading =
+                    text.starts_with("CPU usage ") || text.starts_with("CPU competition ");
                 Line::styled(
                     text,
                     Style::default().fg(color).add_modifier(if heading {
@@ -124,7 +125,7 @@ pub fn draw(frame: &mut Frame, app: &App, elapsed: Duration) {
                 Layout::vertical([Constraint::Min(0), Constraint::Length(1)]).split(rows[1]);
             living(frame, pieces[0], app, elapsed);
             let badges = format!(
-                "CPU usage {}     CPU pressure {}",
+                "CPU usage {}     CPU competition {}",
                 value(&app.analysis.cpu_active_ratio, 100.0),
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             );
@@ -327,17 +328,14 @@ fn metrics(frame: &mut Frame, area: Rect, app: &App) {
     card(
         frame,
         cards[1],
-        "CPU pressure",
+        "CPU competition",
         &app.analysis.cpu_psi_some_interval_ratio,
         app.history.iter().map(|p| p.pressure).collect(),
         AMBER,
-        &[
-            "Competition".into(),
-            format!(
-                "10s avg {}",
-                value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
-            ),
-        ],
+        &[format!(
+            "10s avg {}",
+            value(&app.analysis.cpu_psi_some_avg10_pct, 1.0)
+        )],
     );
     let runnable = app
         .analysis
@@ -461,7 +459,7 @@ fn small_terminal(frame: &mut Frame, area: Rect, app: &App) {
                 value(&app.analysis.cpu_active_ratio, 100.0)
             )),
             Line::raw(format!(
-                "CPU pressure {}",
+                "CPU competition {}",
                 value(&app.analysis.cpu_psi_some_interval_ratio, 100.0)
             )),
         ]);

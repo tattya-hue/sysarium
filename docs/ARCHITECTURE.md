@@ -150,7 +150,7 @@ Agent・IPC・GUI・記録再生・Simulationは**現段階で実装しない**�
 
 ## v0.1の詳細表示と終了処理
 
-通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．通常画面はCPU pressure / Competition，詳細はPSI someによるCPU競合の割合とCPU別の重み付けを短く示す．計算式・生JSON・内部型はNDJSONへ集約する．完全な観測値・原因はNDJSONに保持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
+通常画面は現在値・履歴と比喩を優先し，sample_id・取得元・計算規則は`i`の詳細へ集約する．詳細表示も同じ最新AnalysisとSceneに追随し，スクロール位置は可能な範囲で維持する．通常画面はCPU competition，詳細はPSI someによるCPU競合の割合とCPU別の重み付けを短く示す．計算式・生JSON・内部型はNDJSONへ集約する．完全な観測値・原因はNDJSONに保持する．ヘルプと詳細は表示セル幅で折り返す．履歴の時点選択・記録再生・Simulationは導入しない．
 
 Unixの終了シグナルはアプリ側のフラグへ通知し，イベントループを終了して通常の端末復旧へ進む．signal-hookはapps/sysariumのみの依存とし，Core・Linux Collectorへ持ち込まない．シグナルハンドラ内で端末I/Oや解析は行わない．
 

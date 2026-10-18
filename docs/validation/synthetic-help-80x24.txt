@@ -10,14 +10,14 @@
 │q / Ctrl-C Quit                                                               │
 │                                                                              │
 │CPU usage  Working: CPU time doing work (approx.).                            │
-│CPU pressure  Competition for CPU (PSI some).                                 │
+│CPU competition  PSI some (%).                                                │
 │PSI %      CPU-weighted; not per-task wait time.                              │
 │10s avg    Smoothed pressure over ~10s.                                       │
 │Runnable   Running + ready to run; not a waiting count.                       │
 │                                                                              │
 │Character: green relaxed / amber busy / red strained.                         │
 │Color follows smoothed CPU usage, not measured latency.                       │
-│Papers reflect CPU pressure; not a task count.                                │
+│Papers reflect CPU competition; not a task count.                             │
 │Starting… ~1s; N/A or ? = unavailable.                                        │
 │Charts: past → now, 0–100%, up to 120 readings.                               │
 │▁ = zero / near zero; ? = missing.                                            │

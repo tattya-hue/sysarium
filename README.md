@@ -23,7 +23,7 @@ Requires Linux, Rust 1.88+, and a UTF-8 terminal of at least **80 × 24**. SSH w
 
 ![Strained computer — synthetic data](docs/assets/strained.gif)
 
-Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = strained.** Character state follows smoothed CPU usage; it does not measure latency. Papers reflect CPU pressure. [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
+Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = strained.** Character state follows smoothed CPU usage; it does not measure latency. Papers reflect CPU competition. [Static previews](docs/assets/busy-low-wait.png) · [with contention](docs/assets/busy-high-wait.png).
 
 | Control | Action |
 |---|---|
@@ -38,13 +38,13 @@ Synthetic fixtures, not a load test. **Green = relaxed · amber = busy · red = 
 | Metric | Meaning |
 |---|---|
 | CPU usage · Working | CPU time spent doing work, across all CPUs (approx.). |
-| CPU pressure · Competition | CPU-weighted contention (PSI some, %). |
-| 10s avg | Smoothed pressure over ~10s. |
+| CPU competition | CPU-weighted contention (PSI some, %). |
+| 10s avg | Smoothed competition over ~10s. |
 | Runnable | Running and ready tasks; not a waiting count. |
 
 Papers show contention, not task counts.
 
-**PSI** measures CPU contention across CPUs, not per-task wait time. Higher % means more pressure. Usage excludes I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the details.
+**PSI** measures CPU contention across CPUs, not per-task wait time. Higher % means more competition. Usage excludes I/O wait and VM steal; [calculation rules](docs/ARCHITECTURE.md) and `--json` retain the details.
 
 Updates run at ~1 Hz, animation at up to 10 FPS. Charts keep up to 120 readings, past on the left, latest on the right, on a 0–100% scale. `N/A` and `?` mean unknown; `▁` marks zero or very low values. Charts begin with the first ~1s interval; startup uses a neutral face and `…`. Missing data never becomes zero.
 

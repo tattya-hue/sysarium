@@ -94,7 +94,7 @@ pub fn json(analysis: &Analysis) -> io::Result<String> {
             "sampling":"sequential proc reads, timestamps at collection start; not an atomic snapshot",
         },
         "warnings":analysis.warnings.iter().map(|w| json!({"metric":w.metric,"reason":reason(&w.reason)})).collect::<Vec<_>>(),
-        "limitations":["Visible /proc scope; containers may differ from the physical host.", "CPU usage excludes I/O wait and steal. CPU pressure is CPU-weighted PSI some, not per-task wait time."],
+        "limitations":["Visible /proc scope; containers may differ from the physical host.", "CPU usage excludes I/O wait and steal. CPU competition is CPU-weighted PSI some, not per-task wait time."],
     });
     serde_json::to_string(&value).map_err(io::Error::other)
 }
@@ -117,7 +117,7 @@ pub fn details(a: &Analysis) -> String {
     }
     writeln!(
         out,
-        "\nCPU pressure {}\n  PSI some: competition for CPU.",
+        "\nCPU competition {}\n  PSI some: competition for CPU.",
         display(&a.cpu_psi_some_interval_ratio, 100.0)
     )
     .unwrap();

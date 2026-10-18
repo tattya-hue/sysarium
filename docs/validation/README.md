@@ -75,3 +75,5 @@ A/B/Dの忙しい口を下向きへ変更．汗は青い小さなしずくが左
 ## CPU pressure表記
 
 現行画面はCPU pressure / Competitionと10s avg．詳細のWait timeを除き，PSI someはCPU別に重み付けした競合の割合と短く示す．過去のCPU waitと「どれかのタスクが待った時間」という説明を訂正した．数値は同じfixture・同じ計算のまま，READMEの4状態を更新している．
+
+現行の見出しはCPU competition．重複するCompetitionの説明行を除き，10s avgと履歴だけを添える．画像も更新した．

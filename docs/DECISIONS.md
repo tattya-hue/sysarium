@@ -146,3 +146,11 @@ Rendererは緑・暖色・赤と，笑顔・眉と下向きの口・細めた目
 | D42 | 人向けのWait timeのms表示を撤去．PSIの差分μsはJSONへ保持 | カーネルのCPU別集約値を「どれかのタスクが待った実時間」と読める表示だった．D27・D28・D33の説明を訂正する | タスク別の待機時間を別途計測する場合 |
 
 PSI someは各CPUの停滞時間を非アイドル時間で重み付けして集約する．タスク別の待ち時間の合計・平均や，全CPUの待機時間の単純な和集合ではない．取得区間とCPU構成・配置を欠くタスク待ち時間の例から値は特定できない．根拠は[Linux PSI仕様](https://docs.kernel.org/accounting/psi.html)と[カーネルの集約実装](https://github.com/torvalds/linux/blob/master/kernel/sched/psi.c)．数値計算・%の単位・JSONキー・Scene・依存方向は変更しない．
+
+## CPU competitionへの表記変更
+
+| ID | 決定 | 理由 | 見直す条件 |
+|---|---|---|---|
+| D43 | 見出しをCPU competitionに統一し，重複するCompetitionの補足行を除く | 利用者にはCompetitionの意味が伝わり，pressureが分かりづらかった | 他リソースの表示を設計する場合 |
+
+PSI someの定義・計算・欠測・JSONキーは維持する．

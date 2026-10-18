@@ -274,7 +274,7 @@ fn supported_sizes_preserve_primary_values_without_technical_clutter() {
                 assert!(out.contains("│ ──── │") || out.contains("╭──────╮"));
             }
             if mode != ViewMode::Animation {
-                assert!(out.contains("CPU pressure"));
+                assert!(out.contains("CPU competition"));
                 assert!(out.contains("10s avg"));
                 assert!(!out.lines().skip(3).take(19).any(|line| line.contains('?')));
             }
@@ -511,7 +511,7 @@ fn overlay_scroll_resize_help_and_quit_remain_accessible() {
     press(&mut app, KeyCode::Char('?'));
     for term in [
         "CPU usage",
-        "CPU pressure",
+        "CPU competition",
         "not a task count",
         "CPU-weighted; not per-task wait time",
         "Runnable",
@@ -753,7 +753,7 @@ fn undersized_terminal_shows_guidance_without_cutting_or_shrinking_character() {
     app.resize(40, 24);
     app.observe(p3_observation("d", 3));
     assert_eq!(app.analysis.source_sample_id, 3);
-    assert!(render(&app, 40, 24).contains("CPU pressure N/A"));
+    assert!(render(&app, 40, 24).contains("CPU competition N/A"));
     assert!(press(&mut app, KeyCode::Char('q')));
 }
 
